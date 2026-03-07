@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nordine Camions & Engins d'occasion</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+    body {
+      background: #f4f6f9;
+      color: #1e293b;
+    }
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem;
+    }
+    .header {
+      background: white;
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid #e9edf2;
+    }
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #0b2b4f;
+    }
+    .header p {
+      color: #5f6b7a;
+    }
+    
+    /* BANDEAU MULTILINGUE */
+    .info-banner {
+      background: #0b2b4f;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-weight: 500;
+      border-radius: 50px;
+      margin: 1.5rem 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+    }
+    .info-banner span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .info-banner .fr { color: #ffd700; }
+    .info-banner .en { color: #00ff00; }
+    .info-banner .ar { 
+      font-family: 'Amiri', 'Traditional Arabic', serif;
+      direction: rtl;
+    }
+    
+    /* NUMÉRO DE TÉLÉPHONE */
+    .phone-bar {
+      background: #f1f5f9;
+      padding: 0.8rem;
+      text-align: center;
+      border-radius: 50px;
+      margin: 1rem 0;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+    .phone-bar a {
+      color: #0b2b4f;
+      text-decoration: none;
+    }
+    
+    .vehicle-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .card {
+      background: white;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+      transition: 0.2s;
+      cursor: pointer;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 30px rgba(0,20,40,0.08);
+    }
+    .card-img {
+      height: 200px;
+      background: #e2e8f0;
+      position: relative;
+    }
+    .card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .sold-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: #dc2626;
+      color: white;
+      font-weight: 700;
+      padding: 0.3rem 1rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+    }
+    .card-content {
+      padding: 1.5rem;
+    }
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+    .specs {
+      display: flex;
+      gap: 0.8rem;
+      margin: 0.8rem 0;
+      color: #4b5565;
+    }
+    .specs span {
+      background: #f1f4f9;
+      padding: 0.2rem 0.8rem;
+      border-radius: 40px;
+      font-size: 0.9rem;
+    }
+    .price {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: #0b2b4f;
+      margin: 1rem 0 0.5rem;
+    }
+    .sold-price {
+      text-decoration: line-through;
+      color: #9aa6b5;
+      font-size: 1.2rem;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.6rem 1.2rem;
+      border-radius: 40px;
+      background: #0b2b4f;
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+    }
+    .detail-page {
+      background: white;
+      border-radius: 32px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .main-img {
+      flex: 3;
+      border-radius: 24px;
+      overflow: hidden;
+      max-height: 400px;
+    }
+    .main-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .thumbnails {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .thumbnails img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 16px;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+    .thumbnails img.active {
+      border-color: #0b2b4f;
+    }
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      background: #f8fafd;
+      padding: 1.5rem;
+      border-radius: 24px;
+      margin: 1.5rem 0;
+    }
+    .spec-item strong {
+      display: block;
+      color: #64748b;
+      font-size: 0.8rem;
+    }
+    .whatsapp-btn {
+      background: #25D366;
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 40px;
+      text-decoration: none;
+      display: inline-block;
+      font-weight: 600;
+      margin-top: 1rem;
+    }
+    .hidden {
+      display: none;
+    }
+    .footer {
+      text-align: center;
+      padding: 2rem;
+      color: #5f6b7a;
+      border-top: 1px solid #e2e8f0;
+      margin-top: 3rem;
+    }
+    .computer-icon {
+      font-size: 1.5rem;
+      display: inline-block;
+      margin-right: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="container">
+      <h1>Nordine</h1>
+      <p>Camions & Engins d'occasion</p>
+    </div>
+  </div>
+
+  <main class="container">
+    <!-- BANDEAU MULTILINGUE -->
+    <div class="info-banner">
+      <span class="fr">🇫🇷 Départ France • Paiement France</span>
+      <span class="en">🇬🇧 Departure from France • Payment in France</span>
+      <span class="ar">🇸🇦 المغادرة من فرنسا • الدفع في فرنسا</span>
+    </div>
+
+    <!-- NUMÉRO DE TÉLÉPHONE -->
+    <div class="phone-bar">
+      📞 <a href="tel:+33774670686">+33 7 74 67 06 86</a> (WhatsApp aussi)
+    </div>
+
+    <div id="grid-view">
+      <h2>Nos véhicules</h2>
+      <div class="vehicle-grid" id="vehicle-grid"></div>
+    </div>
+
+    <div id="detail-view" class="hidden">
+      <button onclick="showGrid()" class="btn" style="width: auto; margin-bottom: 1rem;">← Retour</button>
+      <div id="detail-content"></div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span class="computer-icon">💻</span> 2025
+  </footer>
+
+  <script>
+    const STORAGE_KEY = 'nordine_vehicles_public';
+    const WHATSAPP = '33774670686';
+
+    // Données par défaut
+    const defaultVehicles = [
+      {
+        id: 'v1',
+        marque: 'Mercedes',
+        modele: 'Actros 1845',
+        annee: 2021,
+        km: '210 000 km',
+        carburant: 'Diesel',
+        boite: 'Auto',
+        prix: 124500,
+        photos: [
+          'https://images.pexels.com/photos/115654/pexels-photo-115654.jpeg',
+          'https://images.pexels.com/photos/262676/pexels-photo-262676.jpeg',
+          'https://images.pexels.com/photos/142087/pexels-photo-142087.jpeg'
+        ],
+        description: 'Mercedes Actros 1845, très bon état',
+        vendu: false
+      },
+      {
+        id: 'v2',
+        marque: 'Volvo',
+        modele: 'FH 500',
+        annee: 2022,
+        km: '145 000 km',
+        carburant: 'Diesel',
+        boite: 'I-Shift',
+        prix: 142000,
+        photos: [
+          'https://images.pexels.com/photos/219937/pexels-photo-219937.jpeg',
+          'https://images.pexels.com/photos/1376459/pexels-photo-1376459.jpeg'
+        ],
+        description: 'Volvo FH 500 Globetrotter',
+        vendu: false
+      }
+    ];
+
+    function loadVehicles() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) return JSON.parse(stored);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultVehicles));
+      return defaultVehicles;
+    }
+
+    let vehicles = loadVehicles();
+
+    function renderGrid() {
+      const grid = document.getElementById('vehicle-grid');
+      grid.innerHTML = vehicles.map(v => {
+        const mainPhoto = v.photos[0];
+        const priceHtml = v.vendu 
+          ? `<span class="sold-price">${v.prix.toLocaleString()} €</span> VENDU`
+          : `${v.prix.toLocaleString()} €`;
+        
+        return `
+          <div class="card" onclick="showDetail('${v.id}')">
+            <div class="card-img">
+              <img src="${mainPhoto}" alt="${v.marque} ${v.modele}">
+              ${v.vendu ? '<span class="sold-badge">VENDU</span>' : ''}
+            </div>
+            <div class="card-content">
+              <div class="card-title">${v.marque} ${v.modele}</div>
+              <div class="specs">
+                <span>${v.annee}</span>
+                <span>${v.km}</span>
+              </div>
+              <div class="price">${priceHtml}</div>
+              <button class="btn">Voir détails</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.showDetail = function(id) {
+      const v = vehicles.find(v => v.id === id);
+      if (!v) return;
+
+      document.getElementById('grid-view').classList.add('hidden');
+      document.getElementById('detail-view').classList.remove('hidden');
+
+      const message = encodeURIComponent(`Bonjour, je suis intéressé par le ${v.marque} ${v.modele} (${v.annee})`);
+      
+      let thumbsHtml = '';
+      v.photos.forEach((photo, index) => {
+        thumbsHtml += `<img src="${photo}" onclick="changeMainImage(this, '${photo}')" class="${index === 0 ? 'active' : ''}">`;
+      });
+
+      document.getElementById('detail-content').innerHTML = `
+        <div class="detail-page">
+          <h2>${v.marque} ${v.modele} (${v.annee})</h2>
+          
+          <div class="gallery">
+            <div class="main-img" id="main-image-container">
+              <img src="${v.photos[0]}" id="main-image">
+            </div>
+            <div class="thumbnails" id="thumbnails">
+              ${thumbsHtml}
+            </div>
+          </div>
+
+          <div class="specs-grid">
+            <div class="spec-item"><strong>Année</strong> ${v.annee}</div>
+            <div class="spec-item"><strong>Kilométrage</strong> ${v.km}</div>
+            <div class="spec-item"><strong>Carburant</strong> ${v.carburant}</div>
+            <div class="spec-item"><strong>Boîte</strong> ${v.boite}</div>
+          </div>
+
+          <p>${v.description}</p>
+
+          <div style="font-size: 2rem; font-weight: 700; margin: 1.5rem 0;">
+            ${v.vendu ? 'VENDU' : v.prix.toLocaleString() + ' €'}
+          </div>
+
+          ${!v.vendu ? `<a href="https://wa.me/${WHATSAPP}?text=${message}" target="_blank" class="whatsapp-btn">📲 WhatsApp direct</a>` : ''}
+        </div>
+      `;
+    };
+
+    window.changeMainImage = function(thumb, src) {
+      document.getElementById('main-image').src = src;
+      document.querySelectorAll('.thumbnails img').forEach(img => img.classList.remove('active'));
+      thumb.classList.add('active');
+    };
+
+    window.showGrid = function() {
+      document.getElementById('grid-view').classList.remove('hidden');
+      document.getElementById('detail-view').classList.add('hidden');
+    };
+
+    renderGrid();
+  </script>
+</body>
+</html>

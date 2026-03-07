@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Nordine (protégé)</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, sans-serif;
+    }
+    body {
+      background: #f1f5f9;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .card {
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    h1 {
+      color: #0b2b4f;
+      margin-bottom: 1rem;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 1rem;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    button {
+      background: #0b2b4f;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-right: 0.5rem;
+    }
+    button.danger {
+      background: #dc2626;
+    }
+    button.secondary {
+      background: #64748b;
+    }
+    .vehicle-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 12px;
+      margin-bottom: 0.5rem;
+    }
+    .sold-badge {
+      background: #dc2626;
+      color: white;
+      padding: 0.2rem 0.8rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      margin-left: 1rem;
+    }
+    .actions button {
+      padding: 0.4rem 1rem;
+      margin-left: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .checkbox {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .checkbox input {
+      width: auto;
+    }
+    .password-screen {
+      text-align: center;
+      padding: 3rem;
+    }
+    .password-screen input {
+      max-width: 300px;
+      margin: 1rem auto;
+    }
+    .error {
+      color: #dc2626;
+      margin-top: 1rem;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Écran de connexion -->
+    <div id="login-screen" class="card password-screen">
+      <h1>🔒 Accès administrateur</h1>
+      <p>Veuillez entrer le mot de passe pour continuer</p>
+      <input type="password" id="password-input" placeholder="Mot de passe">
+      <button onclick="checkPassword()">Se connecter</button>
+      <div id="password-error" class="error"></div>
+    </div>
+
+    <!-- Panneau admin (caché par défaut) -->
+    <div id="admin-panel" class="hidden">
+      <h1>⚙️ Administration Nordine</h1>
+      
+      <div class="card">
+        <h2>Ajouter / Modifier un véhicule</h2>
+        <form id="vehicleForm">
+          <div class="row">
+            <div class="form-group">
+              <label>Marque *</label>
+              <input type="text" id="marque" required>
+            </div>
+            <div class="form-group">
+              <label>Modèle *</label>
+              <input type="text" id="modele" required>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="form-group">
+              <label>Année</label>
+              <input type="number" id="annee">
+            </div>
+            <div class="form-group">
+              <label>Kilométrage</label>
+              <input type="text" id="km">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="form-group">
+              <label>Carburant</label>
+              <input type="text" id="carburant">
+            </div>
+            <div class="form-group">
+              <label>Boîte</label>
+              <input type="text" id="boite">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="form-group">
+              <label>Prix (€) *</label>
+              <input type="number" id="prix" required>
+            </div>
+            <div class="form-group checkbox">
+              <label>
+                <input type="checkbox" id="vendu"> Vendu
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Photos (URLs, séparées par des virgules) *</label>
+            <input type="text" id="photos" placeholder="https://... , https://..." required>
+            <small>La première sera l'image principale</small>
+          </div>
+
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="description" rows="3"></textarea>
+          </div>
+
+          <input type="hidden" id="editId">
+          
+          <button type="submit">💾 Enregistrer</button>
+          <button type="button" class="secondary" onclick="clearForm()">Annuler</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Véhicules existants</h2>
+        <div id="vehicleList"></div>
+      </div>
+
+      <div style="margin-top: 2rem;">
+        <a href="index.html" target="_blank" style="color: #0b2b4f;">← Voir le site public</a>
+        <button onclick="logout()" class="secondary" style="margin-left: 1rem;">Déconnexion</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 🔐 Mot de passe (tu peux le changer ici)
+    const ADMIN_PASSWORD = "nordine2025";
+
+    // Vérification du mot de passe
+    window.checkPassword = function() {
+      const input = document.getElementById('password-input').value;
+      if (input === ADMIN_PASSWORD) {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('admin-panel').classList.remove('hidden');
+        document.getElementById('password-error').textContent = '';
+        loadData(); // Charger les données après connexion
+      } else {
+        document.getElementById('password-error').textContent = '❌ Mot de passe incorrect';
+      }
+    };
+
+    // Déconnexion
+    window.logout = function() {
+      document.getElementById('login-screen').classList.remove('hidden');
+      document.getElementById('admin-panel').classList.add('hidden');
+      document.getElementById('password-input').value = '';
+    };
+
+    // ---- GESTION DES DONNÉES (identique à avant) ----
+    const STORAGE_KEY = 'nordine_vehicles_public';
+
+    const defaultVehicles = [
+      {
+        id: 'v1',
+        marque: 'Mercedes',
+        modele: 'Actros 1845',
+        annee: 2021,
+        km: '210 000 km',
+        carburant: 'Diesel',
+        boite: 'Auto',
+        prix: 124500,
+        photos: [
+          'https://images.pexels.com/photos/115654/pexels-photo-115654.jpeg',
+          'https://images.pexels.com/photos/262676/pexels-photo-262676.jpeg',
+          'https://images.pexels.com/photos/142087/pexels-photo-142087.jpeg'
+        ],
+        description: 'Mercedes Actros 1845, très bon état',
+        vendu: false
+      },
+      {
+        id: 'v2',
+        marque: 'Volvo',
+        modele: 'FH 500',
+        annee: 2022,
+        km: '145 000 km',
+        carburant: 'Diesel',
+        boite: 'I-Shift',
+        prix: 142000,
+        photos: [
+          'https://images.pexels.com/photos/219937/pexels-photo-219937.jpeg',
+          'https://images.pexels.com/photos/1376459/pexels-photo-1376459.jpeg'
+        ],
+        description: 'Volvo FH 500 Globetrotter',
+        vendu: false
+      }
+    ];
+
+    function loadVehicles() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) return JSON.parse(stored);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultVehicles));
+      return defaultVehicles;
+    }
+
+    function saveVehicles(vehicles) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(vehicles));
+    }
+
+    let vehicles = [];
+
+    function loadData() {
+      vehicles = loadVehicles();
+      renderList();
+    }
+
+    function renderList() {
+      const list = document.getElementById('vehicleList');
+      list.innerHTML = vehicles.map(v => `
+        <div class="vehicle-item">
+          <div>
+            <strong>${v.marque} ${v.modele}</strong> (${v.annee}) - ${v.prix} €
+            ${v.vendu ? '<span class="sold-badge">VENDU</span>' : ''}
+          </div>
+          <div class="actions">
+            <button onclick="editVehicle('${v.id}')">✏️ Modifier</button>
+            <button class="danger" onclick="deleteVehicle('${v.id}')">🗑️ Supprimer</button>
+            <button onclick="toggleSold('${v.id}')">🏷️ ${v.vendu ? 'Remettre en vente' : 'Marquer vendu'}</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('vehicleForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const id = document.getElementById('editId').value || 'v_' + Date.now();
+      const photos = document.getElementById('photos').value.split(',').map(s => s.trim());
+
+      const vehicle = {
+        id,
+        marque: document.getElementById('marque').value,
+        modele: document.getElementById('modele').value,
+        annee: document.getElementById('annee').value,
+        km: document.getElementById('km').value,
+        carburant: document.getElementById('carburant').value,
+        boite: document.getElementById('boite').value,
+        prix: Number(document.getElementById('prix').value),
+        photos: photos,
+        description: document.getElementById('description').value,
+        vendu: document.getElementById('vendu').checked
+      };
+
+      if (document.getElementById('editId').value) {
+        const index = vehicles.findIndex(v => v.id === id);
+        vehicles[index] = vehicle;
+      } else {
+        vehicles.push(vehicle);
+      }
+
+      saveVehicles(vehicles);
+      clearForm();
+      renderList();
+    });
+
+    window.editVehicle = (id) => {
+      const v = vehicles.find(v => v.id === id);
+      document.getElementById('marque').value = v.marque;
+      document.getElementById('modele').value = v.modele;
+      document.getElementById('annee').value = v.annee;
+      document.getElementById('km').value = v.km;
+      document.getElementById('carburant').value = v.carburant;
+      document.getElementById('boite').value = v.boite;
+      document.getElementById('prix').value = v.prix;
+      document.getElementById('vendu').checked = v.vendu;
+      document.getElementById('photos').value = v.photos.join(', ');
+      document.getElementById('description').value = v.description;
+      document.getElementById('editId').value = v.id;
+    };
+
+    window.deleteVehicle = (id) => {
+      if (confirm('Supprimer ce véhicule ?')) {
+        vehicles = vehicles.filter(v => v.id !== id);
+        saveVehicles(vehicles);
+        renderList();
+        if (document.getElementById('editId').value === id) clearForm();
+      }
+    };
+
+    window.toggleSold = (id) => {
+      const v = vehicles.find(v => v.id === id);
+      v.vendu = !v.vendu;
+      saveVehicles(vehicles);
+      renderList();
+    };
+
+    window.clearForm = () => {
+      document.getElementById('vehicleForm').reset();
+      document.getElementById('editId').value = '';
+    };
+
+    // Vérifier si déjà connecté (optionnel, on force la connexion)
+    // Pas de session persistante pour rester simple
+  </script>
+</body>
+</html>
