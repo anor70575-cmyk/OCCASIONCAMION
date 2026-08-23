@@ -3,314 +3,455 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nordine Camions & Engins d'occasion</title>
+  <title>Nordine — Camions & Engins d'occasion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Inter', system-ui, sans-serif;
+    :root {
+      --navy-950: #060c17;
+      --navy-900: #0b1626;
+      --navy-800: #12213a;
+      --navy-700: #1b2f4d;
+      --gold-400: #f5c33b;
+      --gold-500: #edb008;
+      --amber-600: #d9720a;
+      --paper: #f3efe6;
+      --ash-300: #a9b4c4;
+      --ash-500: #6c7a90;
+      --danger: #e0453a;
+      --whatsapp: #25d366;
+      --radius-lg: 22px;
+      --radius-md: 14px;
     }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: #f4f6f9;
-      color: #1e293b;
+      background: var(--navy-950);
+      color: var(--paper);
+      font-family: 'Inter', system-ui, sans-serif;
+      line-height: 1.5;
     }
-    .container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 1.5rem 2rem;
+    h1, h2, h3, .display {
+      font-family: 'Oswald', system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
     }
-    .header {
-      background: white;
-      padding: 1.5rem 2rem;
-      border-bottom: 1px solid #e9edf2;
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    a { color: inherit; }
+    .container { max-width: 1240px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* ---------- Hazard stripe signature element ---------- */
+    .hazard-strip {
+      height: 10px;
+      background: repeating-linear-gradient(
+        135deg,
+        var(--gold-500), var(--gold-500) 14px,
+        var(--navy-950) 14px, var(--navy-950) 28px
+      );
     }
-    .header h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #0b2b4f;
+
+    /* ---------- Header / Hero ---------- */
+    .hero {
+      position: relative;
+      background:
+        linear-gradient(180deg, rgba(6,12,23,0.55) 0%, rgba(6,12,23,0.92) 78%, var(--navy-950) 100%),
+        url('https://i.postimg.cc/yY1VrLXY/Whats-App-Image-2025-10-14-at-12-00-03-1-imageonline-co-merged.jpg') center 35% / cover no-repeat;
+      padding: 2.2rem 0 2.6rem;
     }
-    .header p {
-      color: #5f6b7a;
-    }
-    
-    /* BANDEAU MULTILINGUE */
-    .info-banner {
-      background: #0b2b4f;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-      font-weight: 500;
-      border-radius: 50px;
-      margin: 1.5rem 0;
+    .brand-row {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 2rem;
-    }
-    .info-banner span {
-      display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.4rem;
     }
-    .info-banner .fr { color: #ffd700; }
-    .info-banner .en { color: #00ff00; }
-    .info-banner .ar { 
-      font-family: 'Amiri', 'Traditional Arabic', serif;
-      direction: rtl;
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 0.6rem;
     }
-    
-    /* NUMÉRO DE TÉLÉPHONE */
-    .phone-bar {
-      background: #f1f5f9;
-      padding: 0.8rem;
-      text-align: center;
-      border-radius: 50px;
-      margin: 1rem 0;
-      font-size: 1.3rem;
-      font-weight: 600;
+    .brand .name {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--gold-400);
     }
-    .phone-bar a {
-      color: #0b2b4f;
+    .brand .tag {
+      font-size: 0.8rem;
+      color: var(--ash-300);
+      text-transform: none;
+      letter-spacing: 0;
+      font-family: 'Inter', sans-serif;
+    }
+    .contact-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      background: rgba(11,22,38,0.85);
+      border: 1px solid rgba(245,195,59,0.35);
+      border-radius: 999px;
+      padding: 0.6rem 1.1rem;
+      backdrop-filter: blur(6px);
+    }
+    .contact-pill .num {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+      font-size: 1rem;
+      color: var(--paper);
       text-decoration: none;
     }
-    
+    .contact-pill .divider { color: var(--ash-500); }
+    .wa-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--whatsapp);
+      color: #04240f;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .wa-chip:hover { filter: brightness(1.08); }
+    .open-247 {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--gold-400);
+      white-space: nowrap;
+      font-family: 'Oswald', sans-serif;
+      letter-spacing: 0.03em;
+    }
+
+    .hero-title {
+      font-size: clamp(2.1rem, 5vw, 3.6rem);
+      font-weight: 700;
+      line-height: 1.02;
+      color: var(--paper);
+      max-width: 720px;
+    }
+    .hero-title em {
+      font-style: normal;
+      color: var(--gold-400);
+    }
+    .hero-sub {
+      margin-top: 0.9rem;
+      max-width: 560px;
+      color: var(--ash-300);
+      font-size: 1.02rem;
+      text-transform: none;
+      letter-spacing: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ---------- Language banner ---------- */
+    .lang-banner {
+      margin-top: 2rem;
+      background: var(--navy-800);
+      border: 1px solid var(--navy-700);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 1.1rem;
+      flex-wrap: wrap;
+    }
+    .lang-banner .flags {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+    .lang-banner .flags img {
+      width: 26px;
+      height: 19px;
+      object-fit: cover;
+      border-radius: 3px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
+      display: block;
+    }
+    .lang-banner .msg {
+      color: var(--paper);
+      font-size: 0.92rem;
+      font-weight: 500;
+    }
+    .lang-banner .msg strong { color: var(--gold-400); }
+    .lang-banner .msg small {
+      display: block;
+      color: var(--ash-300);
+      font-weight: 400;
+      margin-top: 0.15rem;
+    }
+
+    /* ---------- Vehicle grid ---------- */
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin: 3rem 0 1.4rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .section-head h2 { font-size: 1.5rem; color: var(--paper); }
+    .section-head .count { color: var(--ash-500); font-size: 0.85rem; text-transform: none; letter-spacing: 0; }
+
     .vehicle-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 2rem;
-      margin-top: 2rem;
+      gap: 1.6rem;
+      padding-bottom: 4rem;
     }
     .card {
-      background: white;
-      border-radius: 24px;
+      background: var(--navy-800);
+      border: 1px solid var(--navy-700);
+      border-radius: var(--radius-lg);
       overflow: hidden;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
-      transition: 0.2s;
-      cursor: pointer;
+      transition: transform 0.18s ease, border-color 0.18s ease;
     }
     .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 20px 30px rgba(0,20,40,0.08);
+      transform: translateY(-3px);
+      border-color: rgba(245,195,59,0.4);
     }
-    .card-img {
-      height: 200px;
-      background: #e2e8f0;
-      position: relative;
-    }
-    .card-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    .card-img { position: relative; height: 190px; background: var(--navy-700); }
+    .card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .sold-badge {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: #dc2626;
-      color: white;
-      font-weight: 700;
-      padding: 0.3rem 1rem;
-      border-radius: 40px;
-      font-size: 0.8rem;
+      position: absolute; top: 12px; right: 12px;
+      background: var(--danger); color: white;
+      font-weight: 700; font-size: 0.72rem;
+      padding: 0.3rem 0.8rem; border-radius: 999px;
+      font-family: 'Oswald', sans-serif; letter-spacing: 0.04em;
     }
-    .card-content {
-      padding: 1.5rem;
-    }
-    .card-title {
-      font-size: 1.3rem;
-      font-weight: 600;
-    }
-    .specs {
-      display: flex;
-      gap: 0.8rem;
-      margin: 0.8rem 0;
-      color: #4b5565;
-    }
+    .card-content { padding: 1.3rem 1.4rem 1.4rem; }
+    .card-title { font-size: 1.12rem; color: var(--paper); font-weight: 600; }
+    .specs { display: flex; gap: 0.5rem; margin: 0.7rem 0 0.9rem; flex-wrap: wrap; }
     .specs span {
-      background: #f1f4f9;
-      padding: 0.2rem 0.8rem;
-      border-radius: 40px;
-      font-size: 0.9rem;
+      background: var(--navy-950);
+      border: 1px solid var(--navy-700);
+      color: var(--ash-300);
+      padding: 0.22rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-family: 'JetBrains Mono', monospace;
+      text-transform: none;
     }
     .price {
-      font-size: 1.7rem;
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.5rem;
       font-weight: 700;
-      color: #0b2b4f;
-      margin: 1rem 0 0.5rem;
+      color: var(--gold-400);
+      margin-bottom: 0.9rem;
     }
-    .sold-price {
-      text-decoration: line-through;
-      color: #9aa6b5;
-      font-size: 1.2rem;
-    }
+    .sold-price { text-decoration: line-through; color: var(--ash-500); font-size: 1.1rem; margin-right: 0.5rem; }
+    .card-actions { display: flex; gap: 0.6rem; }
     .btn {
-      display: inline-block;
-      padding: 0.6rem 1.2rem;
-      border-radius: 40px;
-      background: #0b2b4f;
-      color: white;
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.65rem 1rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.85rem;
       text-decoration: none;
-      font-weight: 500;
       border: none;
       cursor: pointer;
-      width: 100%;
-      text-align: center;
+      font-family: 'Inter', sans-serif;
     }
+    .btn-detail { background: var(--navy-700); color: var(--paper); }
+    .btn-detail:hover { background: #24405f; }
+    .btn-wa { background: var(--whatsapp); color: #04240f; }
+    .btn-wa:hover { filter: brightness(1.08); }
+
+    /* ---------- Detail view ---------- */
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: none; border: 1px solid var(--navy-700);
+      color: var(--ash-300); padding: 0.55rem 1.1rem;
+      border-radius: 999px; cursor: pointer; font-size: 0.85rem;
+      margin: 2rem 0 1.4rem; font-family: 'Inter', sans-serif;
+    }
+    .back-btn:hover { border-color: var(--gold-400); color: var(--gold-400); }
     .detail-page {
-      background: white;
-      border-radius: 32px;
+      background: var(--navy-800);
+      border: 1px solid var(--navy-700);
+      border-radius: 28px;
       padding: 2rem;
-      margin: 2rem 0;
+      margin-bottom: 4rem;
     }
-    .gallery {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    .main-img {
-      flex: 3;
-      border-radius: 24px;
-      overflow: hidden;
-      max-height: 400px;
-    }
-    .main-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .thumbnails {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-    }
+    .detail-page h2 { font-size: 1.9rem; color: var(--paper); margin-bottom: 1.4rem; }
+    .gallery { display: flex; gap: 1rem; margin-bottom: 1.8rem; flex-wrap: wrap; }
+    .main-img { flex: 3; min-width: 260px; border-radius: 18px; overflow: hidden; max-height: 400px; background: var(--navy-950); }
+    .main-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .thumbnails { flex: 1; min-width: 100px; display: flex; flex-direction: row; lg-flex-direction: column; gap: 0.6rem; flex-wrap: wrap; }
     .thumbnails img {
-      width: 100%;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 16px;
-      cursor: pointer;
-      border: 2px solid transparent;
+      width: 90px; height: 90px; object-fit: cover; border-radius: 12px;
+      cursor: pointer; border: 2px solid transparent; opacity: 0.75;
     }
-    .thumbnails img.active {
-      border-color: #0b2b4f;
-    }
+    .thumbnails img.active { border-color: var(--gold-400); opacity: 1; }
     .specs-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-      background: #f8fafd;
-      padding: 1.5rem;
-      border-radius: 24px;
-      margin: 1.5rem 0;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr));
+      gap: 1rem; background: var(--navy-950); border: 1px solid var(--navy-700);
+      padding: 1.3rem; border-radius: 18px; margin: 1.4rem 0;
     }
     .spec-item strong {
-      display: block;
-      color: #64748b;
-      font-size: 0.8rem;
+      display: block; color: var(--ash-500); font-size: 0.72rem;
+      text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem;
+      font-family: 'Oswald', sans-serif;
     }
+    .spec-item span { font-family: 'JetBrains Mono', monospace; color: var(--paper); }
+    .detail-desc { color: var(--ash-300); margin: 1rem 0; max-width: 640px; }
+    .detail-price { font-family: 'Oswald', sans-serif; font-size: 2.1rem; font-weight: 700; color: var(--gold-400); margin: 1rem 0; }
     .whatsapp-btn {
-      background: #25D366;
-      color: white;
-      padding: 1rem 2rem;
-      border-radius: 40px;
-      text-decoration: none;
-      display: inline-block;
-      font-weight: 600;
-      margin-top: 1rem;
+      background: var(--whatsapp); color: #04240f; padding: 0.9rem 1.8rem;
+      border-radius: 999px; text-decoration: none; display: inline-flex;
+      align-items: center; gap: 0.5rem; font-weight: 700; font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
     }
-    .hidden {
-      display: none;
+    .whatsapp-btn:hover { filter: brightness(1.06); }
+
+    .hidden { display: none; }
+    .empty-state {
+      text-align: center; padding: 3rem 1rem; color: var(--ash-500);
+      border: 1px dashed var(--navy-700); border-radius: var(--radius-lg);
     }
     .footer {
-      text-align: center;
-      padding: 2rem;
-      color: #5f6b7a;
-      border-top: 1px solid #e2e8f0;
-      margin-top: 3rem;
+      text-align: center; padding: 2.4rem 1rem;
+      color: var(--ash-500); border-top: 1px solid var(--navy-800);
+      font-size: 0.85rem;
     }
-    .computer-icon {
-      font-size: 1.5rem;
-      display: inline-block;
-      margin-right: 0.5rem;
+    .footer a { color: var(--gold-400); text-decoration: none; }
+
+    @media (max-width: 640px) {
+      .contact-pill { width: 100%; justify-content: space-between; }
+      .thumbnails { flex-direction: row; }
     }
   </style>
 </head>
 <body>
-  <div class="header">
+
+  <div class="hero">
     <div class="container">
-      <h1>Nordine</h1>
-      <p>Camions & Engins d'occasion</p>
+      <div class="brand-row">
+        <div class="brand">
+          <span class="name">NORDINE</span>
+          <span class="tag">Camions & Engins d'occasion</span>
+        </div>
+        <div class="contact-pill">
+          <a class="num" href="tel:+33774670686">+33 7 74 67 06 86</a>
+          <span class="divider">•</span>
+          <a class="wa-chip" href="https://wa.me/33774670686" target="_blank" rel="noopener">
+            WhatsApp
+          </a>
+          <span class="divider">•</span>
+          <span class="open-247">24h/24 · 7j/7</span>
+        </div>
+      </div>
+
+      <h1 class="hero-title">Camions & engins d'occasion, <em>vérifiés et prêts au départ.</em></h1>
+      <p class="hero-sub">Porte-engins, bennes, malaxeurs, tracteurs routiers — sélectionnés, contrôlés, disponibles au départ France.</p>
+
+      <div class="lang-banner">
+        <div class="flags">
+          <img src="https://flagcdn.com/w40/fr.png" alt="Français">
+          <img src="https://flagcdn.com/w40/gb.png" alt="Anglais">
+          <img src="https://flagcdn.com/w40/sa.png" alt="Arabe">
+          <img src="https://flagcdn.com/w40/de.png" alt="Allemand">
+          <img src="https://flagcdn.com/w40/es.png" alt="Espagnol">
+          <img src="https://flagcdn.com/w40/it.png" alt="Italien">
+          <img src="https://flagcdn.com/w40/pt.png" alt="Portugais">
+          <img src="https://flagcdn.com/w40/nl.png" alt="Néerlandais">
+          <img src="https://flagcdn.com/w40/tr.png" alt="Turc">
+          <img src="https://flagcdn.com/w40/ro.png" alt="Roumain">
+          <img src="https://flagcdn.com/w40/pl.png" alt="Polonais">
+          <img src="https://flagcdn.com/w40/ru.png" alt="Russe">
+        </div>
+        <div class="msg">
+          <strong>Celia répond 24h/24 sur WhatsApp — texte ou vocal, dans votre langue.</strong>
+          <small>Celia is available 24/7 on WhatsApp — text or voice, in your language. سيليا متاحة على واتساب على مدار الساعة — كتابةً أو صوتيًا، بلغتك.</small>
+        </div>
+      </div>
     </div>
   </div>
 
+  <div class="hazard-strip"></div>
+
   <main class="container">
-    <!-- BANDEAU MULTILINGUE -->
-    <div class="info-banner">
-      <span class="fr">🇫🇷 Départ France • Paiement France</span>
-      <span class="en">🇬🇧 Departure from France • Payment in France</span>
-      <span class="ar">🇸🇦 المغادرة من فرنسا • الدفع في فرنسا</span>
-    </div>
-
-    <!-- NUMÉRO DE TÉLÉPHONE -->
-    <div class="phone-bar">
-      📞 <a href="tel:+33774670686">+33 7 74 67 06 86</a> (WhatsApp aussi)
-    </div>
-
     <div id="grid-view">
-      <h2>Nos véhicules</h2>
+      <div class="section-head">
+        <h2>Nos véhicules</h2>
+        <span class="count" id="vehicle-count"></span>
+      </div>
       <div class="vehicle-grid" id="vehicle-grid"></div>
     </div>
 
     <div id="detail-view" class="hidden">
-      <button onclick="showGrid()" class="btn" style="width: auto; margin-bottom: 1rem;">← Retour</button>
+      <button onclick="showGrid()" class="back-btn">← Retour aux véhicules</button>
       <div id="detail-content"></div>
     </div>
   </main>
 
   <footer class="footer">
-    <span class="computer-icon">💻</span> 2025
+    Nordine Camions & Engins d'occasion — <a href="tel:+33774670686">+33 7 74 67 06 86</a> · <a href="https://wa.me/33774670686" target="_blank" rel="noopener">WhatsApp</a>
+    <br><span style="color: var(--gold-400); font-family: 'Oswald', sans-serif; letter-spacing: 0.03em;">Celia répond 24h/24 · 7j/7</span>
   </footer>
 
   <script>
     const STORAGE_KEY = 'nordine_vehicles_public';
     const WHATSAPP = '33774670686';
 
-    // Données par défaut
     const defaultVehicles = [
       {
         id: 'v1',
-        marque: 'Mercedes',
-        modele: 'Actros 1845',
-        annee: 2021,
-        km: '210 000 km',
+        marque: 'Renault',
+        modele: 'Premium 280',
+        annee: 2007,
+        km: '1 000 000 km',
         carburant: 'Diesel',
-        boite: 'Auto',
-        prix: 124500,
-        photos: [
-          'https://images.pexels.com/photos/115654/pexels-photo-115654.jpeg',
-          'https://images.pexels.com/photos/262676/pexels-photo-262676.jpeg',
-          'https://images.pexels.com/photos/142087/pexels-photo-142087.jpeg'
-        ],
-        description: 'Mercedes Actros 1845, très bon état',
+        boite: 'Manuelle',
+        prix: 5000,
+        photos: ['https://i.postimg.cc/dVm0kq6H/Whats-App-Image-2025-10-14-at-12-00-02-1-imageonline-co-merged.jpg'],
+        description: 'Renault Premium 280 caisse, prêt à travailler.',
         vendu: false
       },
       {
         id: 'v2',
-        marque: 'Volvo',
-        modele: 'FH 500',
-        annee: 2022,
-        km: '145 000 km',
+        marque: 'Renault',
+        modele: 'Premium 390',
+        annee: 2012,
+        km: '620 000 km',
         carburant: 'Diesel',
-        boite: 'I-Shift',
-        prix: 142000,
-        photos: [
-          'https://images.pexels.com/photos/219937/pexels-photo-219937.jpeg',
-          'https://images.pexels.com/photos/1376459/pexels-photo-1376459.jpeg'
-        ],
-        description: 'Volvo FH 500 Globetrotter',
+        boite: 'Manuelle',
+        prix: 11000,
+        photos: ['https://i.postimg.cc/VN31THWd/Whats-App-Image-2025-10-14-at-12-00-02-4.jpg'],
+        description: 'Renault Premium 390 caisse frigo / Carrier.',
+        vendu: false
+      },
+      {
+        id: 'v3',
+        marque: 'Mercedes',
+        modele: 'Actros 1848',
+        annee: 2016,
+        km: '700 000 km',
+        carburant: 'Diesel',
+        boite: 'Automatique',
+        prix: 17000,
+        photos: ['https://i.postimg.cc/yY1VrLXY/Whats-App-Image-2025-10-14-at-12-00-03-1-imageonline-co-merged.jpg'],
+        description: 'Mercedes Actros 1848, tracteur routier.',
+        vendu: false
+      },
+      {
+        id: 'v4',
+        marque: 'Scania',
+        modele: 'R-450',
+        annee: 2016,
+        km: '850 000 km',
+        carburant: 'Diesel',
+        boite: 'Automatique',
+        prix: 20000,
+        photos: ['https://i.postimg.cc/Y24V2Yrb/Whats-App-Image-2025-10-14-at-12-00-02-1-imageonline-co-merged.jpg'],
+        description: 'Scania R-450, tracteur routier.',
         vendu: false
       }
     ];
@@ -324,28 +465,44 @@
 
     let vehicles = loadVehicles();
 
+    function waLink(v) {
+      const msg = encodeURIComponent(`Bonjour, je suis intéressé par le ${v.marque} ${v.modele} (${v.annee})`);
+      return `https://wa.me/${WHATSAPP}?text=${msg}`;
+    }
+
     function renderGrid() {
       const grid = document.getElementById('vehicle-grid');
+      document.getElementById('vehicle-count').textContent = vehicles.length + ' véhicule' + (vehicles.length > 1 ? 's' : '');
+
+      if (vehicles.length === 0) {
+        grid.innerHTML = '';
+        grid.parentElement.insertAdjacentHTML('beforeend', '<div class="empty-state">Aucun véhicule pour le moment.</div>');
+        return;
+      }
+
       grid.innerHTML = vehicles.map(v => {
         const mainPhoto = v.photos[0];
-        const priceHtml = v.vendu 
-          ? `<span class="sold-price">${v.prix.toLocaleString()} €</span> VENDU`
-          : `${v.prix.toLocaleString()} €`;
-        
+        const priceHtml = v.vendu
+          ? `<span class="sold-price">${Number(v.prix).toLocaleString()} €</span> VENDU`
+          : `${Number(v.prix).toLocaleString()} €`;
+
         return `
-          <div class="card" onclick="showDetail('${v.id}')">
-            <div class="card-img">
+          <div class="card">
+            <div class="card-img" onclick="showDetail('${v.id}')" style="cursor:pointer">
               <img src="${mainPhoto}" alt="${v.marque} ${v.modele}">
               ${v.vendu ? '<span class="sold-badge">VENDU</span>' : ''}
             </div>
             <div class="card-content">
-              <div class="card-title">${v.marque} ${v.modele}</div>
+              <div class="card-title" onclick="showDetail('${v.id}')" style="cursor:pointer">${v.marque} ${v.modele}</div>
               <div class="specs">
                 <span>${v.annee}</span>
                 <span>${v.km}</span>
               </div>
               <div class="price">${priceHtml}</div>
-              <button class="btn">Voir détails</button>
+              <div class="card-actions">
+                <button class="btn btn-detail" onclick="showDetail('${v.id}')">Détails</button>
+                ${!v.vendu ? `<a class="btn btn-wa" href="${waLink(v)}" target="_blank" rel="noopener">WhatsApp</a>` : ''}
+              </div>
             </div>
           </div>
         `;
@@ -358,9 +515,8 @@
 
       document.getElementById('grid-view').classList.add('hidden');
       document.getElementById('detail-view').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
 
-      const message = encodeURIComponent(`Bonjour, je suis intéressé par le ${v.marque} ${v.modele} (${v.annee})`);
-      
       let thumbsHtml = '';
       v.photos.forEach((photo, index) => {
         thumbsHtml += `<img src="${photo}" onclick="changeMainImage(this, '${photo}')" class="${index === 0 ? 'active' : ''}">`;
@@ -369,30 +525,26 @@
       document.getElementById('detail-content').innerHTML = `
         <div class="detail-page">
           <h2>${v.marque} ${v.modele} (${v.annee})</h2>
-          
+
           <div class="gallery">
             <div class="main-img" id="main-image-container">
               <img src="${v.photos[0]}" id="main-image">
             </div>
-            <div class="thumbnails" id="thumbnails">
-              ${thumbsHtml}
-            </div>
+            ${v.photos.length > 1 ? `<div class="thumbnails" id="thumbnails">${thumbsHtml}</div>` : ''}
           </div>
 
           <div class="specs-grid">
-            <div class="spec-item"><strong>Année</strong> ${v.annee}</div>
-            <div class="spec-item"><strong>Kilométrage</strong> ${v.km}</div>
-            <div class="spec-item"><strong>Carburant</strong> ${v.carburant}</div>
-            <div class="spec-item"><strong>Boîte</strong> ${v.boite}</div>
+            <div class="spec-item"><strong>Année</strong><span>${v.annee}</span></div>
+            <div class="spec-item"><strong>Kilométrage</strong><span>${v.km}</span></div>
+            <div class="spec-item"><strong>Carburant</strong><span>${v.carburant || '—'}</span></div>
+            <div class="spec-item"><strong>Boîte</strong><span>${v.boite || '—'}</span></div>
           </div>
 
-          <p>${v.description}</p>
+          <p class="detail-desc">${v.description || ''}</p>
 
-          <div style="font-size: 2rem; font-weight: 700; margin: 1.5rem 0;">
-            ${v.vendu ? 'VENDU' : v.prix.toLocaleString() + ' €'}
-          </div>
+          <div class="detail-price">${v.vendu ? 'VENDU' : Number(v.prix).toLocaleString() + ' €'}</div>
 
-          ${!v.vendu ? `<a href="https://wa.me/${WHATSAPP}?text=${message}" target="_blank" class="whatsapp-btn">📲 WhatsApp direct</a>` : ''}
+          ${!v.vendu ? `<a href="${waLink(v)}" target="_blank" rel="noopener" class="whatsapp-btn">📲 WhatsApp direct</a>` : ''}
         </div>
       `;
     };

@@ -3,192 +3,182 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin - Nordine (protégé)</title>
+  <title>Nordine — Administration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: system-ui, sans-serif;
+    :root {
+      --navy-950: #060c17;
+      --navy-900: #0b1626;
+      --navy-800: #12213a;
+      --navy-700: #1b2f4d;
+      --gold-400: #f5c33b;
+      --gold-500: #edb008;
+      --paper: #f3efe6;
+      --ash-300: #a9b4c4;
+      --ash-500: #6c7a90;
+      --danger: #e0453a;
+      --whatsapp: #25d366;
     }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: #f1f5f9;
-      padding: 2rem;
+      background: var(--navy-950);
+      color: var(--paper);
+      font-family: 'Inter', system-ui, sans-serif;
+      padding: 2rem 1.4rem;
     }
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
+    h1, h2, .display {
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
     }
+    .container { max-width: 980px; margin: 0 auto; }
     .card {
-      background: white;
-      border-radius: 24px;
-      padding: 2rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      background: var(--navy-800);
+      border: 1px solid var(--navy-700);
+      border-radius: 22px;
+      padding: 1.8rem;
+      margin-bottom: 1.6rem;
     }
-    h1 {
-      color: #0b2b4f;
-      margin-bottom: 1rem;
-    }
-    .form-group {
-      margin-bottom: 1rem;
-    }
+    h1 { color: var(--gold-400); font-size: 1.5rem; margin-bottom: 0.3rem; }
+    h2 { color: var(--paper); font-size: 1.15rem; margin-bottom: 1.1rem; }
+    .form-group { margin-bottom: 1rem; }
     label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 0.3rem;
+      display: block; font-weight: 600; margin-bottom: 0.35rem;
+      font-size: 0.82rem; color: var(--ash-300);
+      text-transform: uppercase; letter-spacing: 0.03em;
+      font-family: 'Oswald', sans-serif;
     }
-    input, textarea, select {
+    input, textarea {
       width: 100%;
-      padding: 0.8rem;
-      border: 1px solid #cbd5e1;
-      border-radius: 12px;
-      font-size: 1rem;
+      padding: 0.75rem 0.9rem;
+      background: var(--navy-950);
+      border: 1px solid var(--navy-700);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      color: var(--paper);
+      font-family: 'Inter', sans-serif;
     }
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
+    input::placeholder, textarea::placeholder { color: var(--ash-500); }
+    input:focus, textarea:focus { outline: none; border-color: var(--gold-400); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     button {
-      background: #0b2b4f;
-      color: white;
+      background: var(--gold-500);
+      color: var(--navy-950);
       border: none;
-      padding: 0.8rem 1.5rem;
-      border-radius: 40px;
-      font-weight: 600;
+      padding: 0.7rem 1.4rem;
+      border-radius: 999px;
+      font-weight: 700;
       cursor: pointer;
       margin-right: 0.5rem;
-    }
-    button.danger {
-      background: #dc2626;
-    }
-    button.secondary {
-      background: #64748b;
-    }
-    .vehicle-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem;
-      background: #f8fafc;
-      border-radius: 12px;
-      margin-bottom: 0.5rem;
-    }
-    .sold-badge {
-      background: #dc2626;
-      color: white;
-      padding: 0.2rem 0.8rem;
-      border-radius: 40px;
-      font-size: 0.8rem;
-      margin-left: 1rem;
-    }
-    .actions button {
-      padding: 0.4rem 1rem;
-      margin-left: 0.5rem;
+      font-family: 'Inter', sans-serif;
       font-size: 0.9rem;
     }
-    .checkbox {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+    button:hover { filter: brightness(1.08); }
+    button.danger { background: var(--danger); color: white; }
+    button.secondary { background: var(--navy-700); color: var(--paper); }
+    .vehicle-item {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 0.6rem;
+      padding: 0.9rem 1.1rem;
+      background: var(--navy-950);
+      border: 1px solid var(--navy-700);
+      border-radius: 12px;
+      margin-bottom: 0.6rem;
     }
-    .checkbox input {
-      width: auto;
+    .vehicle-item .info { font-family: 'JetBrains Mono', monospace; font-size: 0.92rem; }
+    .sold-badge {
+      background: var(--danger); color: white;
+      padding: 0.15rem 0.7rem; border-radius: 999px;
+      font-size: 0.72rem; margin-left: 0.8rem;
+      font-family: 'Oswald', sans-serif;
     }
-    .password-screen {
-      text-align: center;
-      padding: 3rem;
-    }
-    .password-screen input {
-      max-width: 300px;
-      margin: 1rem auto;
-    }
-    .error {
-      color: #dc2626;
-      margin-top: 1rem;
-    }
-    .hidden {
-      display: none;
-    }
+    .actions button { padding: 0.4rem 0.9rem; margin-left: 0.4rem; font-size: 0.8rem; }
+    .checkbox { display: flex; align-items: center; gap: 0.5rem; }
+    .checkbox input { width: auto; }
+    .password-screen { text-align: center; padding: 3.5rem 1.5rem; }
+    .password-screen input { max-width: 280px; margin: 1.2rem auto; }
+    .password-screen h1 { margin-bottom: 0.4rem; }
+    .password-screen p { color: var(--ash-300); font-size: 0.9rem; }
+    .error { color: var(--danger); margin-top: 0.8rem; font-size: 0.88rem; }
+    .hidden { display: none; }
+    .footer-links { margin-top: 1.6rem; color: var(--ash-300); font-size: 0.88rem; }
+    .footer-links a { color: var(--gold-400); text-decoration: none; }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Écran de connexion -->
     <div id="login-screen" class="card password-screen">
       <h1>🔒 Accès administrateur</h1>
-      <p>Veuillez entrer le mot de passe pour continuer</p>
+      <p>Entre le mot de passe pour gérer le stock de véhicules.</p>
       <input type="password" id="password-input" placeholder="Mot de passe">
-      <button onclick="checkPassword()">Se connecter</button>
+      <div><button onclick="checkPassword()">Se connecter</button></div>
       <div id="password-error" class="error"></div>
     </div>
 
-    <!-- Panneau admin (caché par défaut) -->
     <div id="admin-panel" class="hidden">
-      <h1>⚙️ Administration Nordine</h1>
-      
+      <h1>Administration — Nordine</h1>
+      <p style="color:var(--ash-300); margin-bottom: 1.6rem; font-size:0.9rem;">Ajoute, modifie ou marque comme vendus tes véhicules. Les changements s'affichent immédiatement sur le site public.</p>
+
       <div class="card">
-        <h2>Ajouter / Modifier un véhicule</h2>
+        <h2>Ajouter / modifier un véhicule</h2>
         <form id="vehicleForm">
           <div class="row">
             <div class="form-group">
               <label>Marque *</label>
-              <input type="text" id="marque" required>
+              <input type="text" id="marque" required placeholder="Renault, Mercedes, Scania...">
             </div>
             <div class="form-group">
               <label>Modèle *</label>
-              <input type="text" id="modele" required>
+              <input type="text" id="modele" required placeholder="Premium 390, Actros 1848...">
             </div>
           </div>
 
           <div class="row">
             <div class="form-group">
               <label>Année</label>
-              <input type="number" id="annee">
+              <input type="number" id="annee" placeholder="2016">
             </div>
             <div class="form-group">
               <label>Kilométrage</label>
-              <input type="text" id="km">
+              <input type="text" id="km" placeholder="700 000 km">
             </div>
           </div>
 
           <div class="row">
             <div class="form-group">
               <label>Carburant</label>
-              <input type="text" id="carburant">
+              <input type="text" id="carburant" placeholder="Diesel">
             </div>
             <div class="form-group">
               <label>Boîte</label>
-              <input type="text" id="boite">
+              <input type="text" id="boite" placeholder="Manuelle / Automatique">
             </div>
           </div>
 
           <div class="row">
             <div class="form-group">
               <label>Prix (€) *</label>
-              <input type="number" id="prix" required>
+              <input type="number" id="prix" required placeholder="17000">
             </div>
             <div class="form-group checkbox">
-              <label>
-                <input type="checkbox" id="vendu"> Vendu
-              </label>
+              <label style="margin:0;"><input type="checkbox" id="vendu"> Marquer comme vendu</label>
             </div>
           </div>
 
           <div class="form-group">
-            <label>Photos (URLs, séparées par des virgules) *</label>
+            <label>Photos (URLs séparées par des virgules) *</label>
             <input type="text" id="photos" placeholder="https://... , https://..." required>
-            <small>La première sera l'image principale</small>
           </div>
 
           <div class="form-group">
             <label>Description</label>
-            <textarea id="description" rows="3"></textarea>
+            <textarea id="description" rows="3" placeholder="État général, équipements, particularités..."></textarea>
           </div>
 
           <input type="hidden" id="editId">
-          
+
           <button type="submit">💾 Enregistrer</button>
           <button type="button" class="secondary" onclick="clearForm()">Annuler</button>
         </form>
@@ -199,73 +189,49 @@
         <div id="vehicleList"></div>
       </div>
 
-      <div style="margin-top: 2rem;">
-        <a href="index.html" target="_blank" style="color: #0b2b4f;">← Voir le site public</a>
-        <button onclick="logout()" class="secondary" style="margin-left: 1rem;">Déconnexion</button>
+      <div class="footer-links">
+        <a href="index.html" target="_blank">← Voir le site public</a>
+        &nbsp;&nbsp;·&nbsp;&nbsp;
+        <button onclick="logout()" class="secondary">Déconnexion</button>
       </div>
     </div>
   </div>
 
   <script>
-    // 🔐 Mot de passe (tu peux le changer ici)
     const ADMIN_PASSWORD = "nordine2025";
 
-    // Vérification du mot de passe
     window.checkPassword = function() {
       const input = document.getElementById('password-input').value;
       if (input === ADMIN_PASSWORD) {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('admin-panel').classList.remove('hidden');
         document.getElementById('password-error').textContent = '';
-        loadData(); // Charger les données après connexion
+        loadData();
       } else {
-        document.getElementById('password-error').textContent = '❌ Mot de passe incorrect';
+        document.getElementById('password-error').textContent = 'Mot de passe incorrect';
       }
     };
 
-    // Déconnexion
     window.logout = function() {
       document.getElementById('login-screen').classList.remove('hidden');
       document.getElementById('admin-panel').classList.add('hidden');
       document.getElementById('password-input').value = '';
     };
 
-    // ---- GESTION DES DONNÉES (identique à avant) ----
     const STORAGE_KEY = 'nordine_vehicles_public';
 
     const defaultVehicles = [
       {
-        id: 'v1',
-        marque: 'Mercedes',
-        modele: 'Actros 1845',
-        annee: 2021,
-        km: '210 000 km',
-        carburant: 'Diesel',
-        boite: 'Auto',
-        prix: 124500,
-        photos: [
-          'https://images.pexels.com/photos/115654/pexels-photo-115654.jpeg',
-          'https://images.pexels.com/photos/262676/pexels-photo-262676.jpeg',
-          'https://images.pexels.com/photos/142087/pexels-photo-142087.jpeg'
-        ],
-        description: 'Mercedes Actros 1845, très bon état',
-        vendu: false
+        id: 'v1', marque: 'Renault', modele: 'Premium 280', annee: 2007,
+        km: '1 000 000 km', carburant: 'Diesel', boite: 'Manuelle', prix: 5000,
+        photos: ['https://i.postimg.cc/dVm0kq6H/Whats-App-Image-2025-10-14-at-12-00-02-1-imageonline-co-merged.jpg'],
+        description: 'Renault Premium 280 caisse, prêt à travailler.', vendu: false
       },
       {
-        id: 'v2',
-        marque: 'Volvo',
-        modele: 'FH 500',
-        annee: 2022,
-        km: '145 000 km',
-        carburant: 'Diesel',
-        boite: 'I-Shift',
-        prix: 142000,
-        photos: [
-          'https://images.pexels.com/photos/219937/pexels-photo-219937.jpeg',
-          'https://images.pexels.com/photos/1376459/pexels-photo-1376459.jpeg'
-        ],
-        description: 'Volvo FH 500 Globetrotter',
-        vendu: false
+        id: 'v2', marque: 'Renault', modele: 'Premium 390', annee: 2012,
+        km: '620 000 km', carburant: 'Diesel', boite: 'Manuelle', prix: 11000,
+        photos: ['https://i.postimg.cc/VN31THWd/Whats-App-Image-2025-10-14-at-12-00-02-4.jpg'],
+        description: 'Renault Premium 390 caisse frigo / Carrier.', vendu: false
       }
     ];
 
@@ -289,16 +255,20 @@
 
     function renderList() {
       const list = document.getElementById('vehicleList');
+      if (vehicles.length === 0) {
+        list.innerHTML = '<p style="color:var(--ash-500)">Aucun véhicule enregistré.</p>';
+        return;
+      }
       list.innerHTML = vehicles.map(v => `
         <div class="vehicle-item">
-          <div>
-            <strong>${v.marque} ${v.modele}</strong> (${v.annee}) - ${v.prix} €
+          <div class="info">
+            <strong>${v.marque} ${v.modele}</strong> (${v.annee}) — ${Number(v.prix).toLocaleString()} €
             ${v.vendu ? '<span class="sold-badge">VENDU</span>' : ''}
           </div>
           <div class="actions">
-            <button onclick="editVehicle('${v.id}')">✏️ Modifier</button>
-            <button class="danger" onclick="deleteVehicle('${v.id}')">🗑️ Supprimer</button>
-            <button onclick="toggleSold('${v.id}')">🏷️ ${v.vendu ? 'Remettre en vente' : 'Marquer vendu'}</button>
+            <button onclick="editVehicle('${v.id}')">Modifier</button>
+            <button onclick="toggleSold('${v.id}')">${v.vendu ? 'Remettre en vente' : 'Marquer vendu'}</button>
+            <button class="danger" onclick="deleteVehicle('${v.id}')">Supprimer</button>
           </div>
         </div>
       `).join('');
@@ -306,9 +276,9 @@
 
     document.getElementById('vehicleForm').addEventListener('submit', (e) => {
       e.preventDefault();
-      
+
       const id = document.getElementById('editId').value || 'v_' + Date.now();
-      const photos = document.getElementById('photos').value.split(',').map(s => s.trim());
+      const photos = document.getElementById('photos').value.split(',').map(s => s.trim()).filter(Boolean);
 
       const vehicle = {
         id,
@@ -349,6 +319,7 @@
       document.getElementById('photos').value = v.photos.join(', ');
       document.getElementById('description').value = v.description;
       document.getElementById('editId').value = v.id;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     window.deleteVehicle = (id) => {
@@ -371,9 +342,6 @@
       document.getElementById('vehicleForm').reset();
       document.getElementById('editId').value = '';
     };
-
-    // Vérifier si déjà connecté (optionnel, on force la connexion)
-    // Pas de session persistante pour rester simple
   </script>
 </body>
 </html>
