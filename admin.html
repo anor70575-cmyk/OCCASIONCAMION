@@ -7,6 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
   <style>
     :root {
       --navy-950: #060c17;
@@ -105,6 +107,34 @@
     .hidden { display: none; }
     .footer-links { margin-top: 1.6rem; color: var(--ash-300); font-size: 0.88rem; }
     .footer-links a { color: var(--gold-400); text-decoration: none; }
+
+    /* ---------- Modale de recadrage ---------- */
+    .crop-overlay {
+      position: fixed; inset: 0; background: rgba(6,12,23,0.9);
+      z-index: 1000; display: flex; align-items: center; justify-content: center;
+      padding: 1.2rem;
+    }
+    .crop-modal {
+      background: var(--navy-800); border: 1px solid var(--navy-700);
+      border-radius: 20px; padding: 1.4rem; max-width: 560px; width: 100%;
+    }
+    .crop-modal h3 {
+      font-family: 'Oswald', sans-serif; text-transform: uppercase;
+      color: var(--paper); font-size: 1.05rem; margin-bottom: 0.9rem;
+    }
+    .crop-container { max-height: 55vh; background: #000; border-radius: 10px; overflow: hidden; }
+    .crop-container img { max-width: 100%; display: block; }
+    .crop-actions {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 1.1rem; gap: 0.6rem; flex-wrap: wrap;
+    }
+    .crop-ratio-buttons { display: flex; gap: 0.4rem; }
+    .crop-ratio-buttons button {
+      background: var(--navy-700); color: var(--ash-300);
+      font-size: 0.78rem; padding: 0.4rem 0.8rem; margin: 0;
+    }
+    .crop-ratio-buttons button.active { background: var(--gold-500); color: var(--navy-950); }
+    .crop-progress { color: var(--ash-500); font-size: 0.8rem; margin-bottom: 0.7rem; }
   </style>
 </head>
 <body>
@@ -207,6 +237,26 @@
     </div>
   </div>
 
+  <!-- Modale de recadrage -->
+  <div id="crop-overlay" class="crop-overlay hidden">
+    <div class="crop-modal">
+      <h3>Recadrer la photo</h3>
+      <div class="crop-progress" id="crop-progress"></div>
+      <div class="crop-container">
+        <img id="crop-image" src="">
+      </div>
+      <div class="crop-actions">
+        <div class="crop-ratio-buttons">
+          <button type="button" class="active" data-ratio="1.3333" onclick="setCropRatio(4/3, this)">4:3</button>
+          <button type="button" data-ratio="1.7778" onclick="setCropRatio(16/9, this)">16:9</button>
+          <button type="button" data-ratio="1" onclick="setCropRatio(1, this)">Carré</button>
+          <button type="button" data-ratio="0" onclick="setCropRatio(NaN, this)">Libre</button>
+        </div>
+        <button type="button" onclick="validateCrop()" style="background:var(--gold-500); color:var(--navy-950);">Valider ✓</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const ADMIN_PASSWORD = "nordine2025";
 
@@ -259,33 +309,8 @@
     let vehicles = [];
     let currentPhotos = []; // tableau de {src, isNew} pour l'aperçu en cours d'édition
 
-    // ---- Compression d'image côté navigateur (redimensionne + compresse en JPEG) ----
-    // Utilise createImageBitmap avec imageOrientation:'from-image' pour respecter
-    // automatiquement la rotation EXIF des photos prises avec un téléphone
-    // (sans ça, les photos portrait apparaissent pivotées/mélangées après compression).
-    async function compressImage(file, maxWidth = 1280, quality = 0.75) {
-      let bitmap;
-      try {
-        bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
-      } catch (err) {
-        // Fallback pour navigateurs plus anciens qui ne supportent pas l'option
-        bitmap = await createImageBitmap(file);
-      }
-
-      let { width, height } = bitmap;
-      if (width > maxWidth) {
-        height = Math.round(height * (maxWidth / width));
-        width = maxWidth;
-      }
-
-      const canvas = document.createElement('canvas');
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(bitmap, 0, 0, width, height);
-      bitmap.close();
-      return canvas.toDataURL('image/jpeg', quality);
-    }
+    // Note : Cropper.js gère nativement l'orientation EXIF des photos de téléphone,
+    // donc pas besoin de traitement séparé pour ça.
 
     function renderPhotoPreviews() {
       const container = document.getElementById('photoPreviews');
@@ -312,19 +337,67 @@
       renderPhotoPreviews();
     };
 
-    document.getElementById('photoFiles').addEventListener('change', async (e) => {
+    // ---- File d'attente de recadrage : les photos sélectionnées passent une par une par l'outil ----
+    let cropQueue = [];
+    let cropIndex = 0;
+    let cropper = null;
+    let currentCropRatio = 4 / 3;
+
+    document.getElementById('photoFiles').addEventListener('change', (e) => {
       const files = Array.from(e.target.files);
-      for (const file of files) {
-        try {
-          const compressed = await compressImage(file);
-          currentPhotos.push(compressed);
-        } catch (err) {
-          console.error('Erreur de traitement image:', err);
-        }
-      }
-      renderPhotoPreviews();
-      e.target.value = ''; // reset l'input pour pouvoir re-sélectionner les mêmes fichiers si besoin
+      if (files.length === 0) return;
+      cropQueue = files;
+      cropIndex = 0;
+      openCropModal();
+      e.target.value = '';
     });
+
+    function openCropModal() {
+      const file = cropQueue[cropIndex];
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        document.getElementById('crop-image').src = ev.target.result;
+        document.getElementById('crop-progress').textContent =
+          `Photo ${cropIndex + 1} sur ${cropQueue.length}`;
+        document.getElementById('crop-overlay').classList.remove('hidden');
+
+        if (cropper) cropper.destroy();
+        cropper = new Cropper(document.getElementById('crop-image'), {
+          aspectRatio: currentCropRatio,
+          viewMode: 1,
+          autoCropArea: 1,
+          background: false,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+
+    window.setCropRatio = function(ratio, btn) {
+      currentCropRatio = ratio;
+      document.querySelectorAll('.crop-ratio-buttons button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (cropper) cropper.setAspectRatio(isNaN(ratio) ? NaN : ratio);
+    };
+
+    window.validateCrop = function() {
+      const canvas = cropper.getCroppedCanvas({
+        maxWidth: 1280,
+        maxHeight: 1280,
+        imageSmoothingQuality: 'high',
+      });
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.78);
+      currentPhotos.push(dataUrl);
+      renderPhotoPreviews();
+
+      cropIndex++;
+      if (cropIndex < cropQueue.length) {
+        openCropModal();
+      } else {
+        cropper.destroy();
+        cropper = null;
+        document.getElementById('crop-overlay').classList.add('hidden');
+      }
+    };
 
     function loadData() {
       vehicles = loadVehicles();

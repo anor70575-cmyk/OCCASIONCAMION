@@ -214,18 +214,10 @@
       border-color: rgba(245,195,59,0.4);
     }
     .card-img {
-      position: relative; height: 210px; background: var(--navy-950);
+      position: relative; height: 210px; background: var(--navy-700);
       overflow: hidden;
     }
-    .card-img .img-bg {
-      position: absolute; inset: 0; width: 100%; height: 100%;
-      object-fit: cover; filter: blur(18px) brightness(0.5) saturate(1.1);
-      transform: scale(1.15);
-    }
-    .card-img .img-fg {
-      position: relative; z-index: 1;
-      width: 100%; height: 100%; object-fit: contain; display: block;
-    }
+    .card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .sold-badge {
       position: absolute; top: 12px; right: 12px;
       background: var(--danger); color: white;
@@ -294,19 +286,10 @@
     .detail-page h2 { font-size: 1.9rem; color: var(--paper); margin-bottom: 1.4rem; }
     .gallery { display: flex; gap: 1rem; margin-bottom: 1.8rem; flex-wrap: wrap; }
     .main-img {
-      flex: 3; min-width: 260px; border-radius: 18px;
-      max-height: 400px; background: var(--navy-950);
-      position: relative; overflow: hidden;
+      flex: 3; min-width: 260px; border-radius: 18px; overflow: hidden;
+      max-height: 400px; background: var(--navy-700);
     }
-    .main-img .img-bg {
-      position: absolute; inset: 0; width: 100%; height: 100%;
-      object-fit: cover; filter: blur(22px) brightness(0.5) saturate(1.1);
-      transform: scale(1.15);
-    }
-    .main-img .img-fg {
-      position: relative; z-index: 1;
-      width: 100%; height: 100%; object-fit: contain; display: block;
-    }
+    .main-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .thumbnails { flex: 1; min-width: 100px; display: flex; flex-direction: row; lg-flex-direction: column; gap: 0.6rem; flex-wrap: wrap; }
     .thumbnails img {
       width: 90px; height: 90px; object-fit: cover; border-radius: 12px;
@@ -512,8 +495,7 @@
         return `
           <div class="card">
             <div class="card-img" onclick="showDetail('${v.id}')" style="cursor:pointer">
-              <img src="${mainPhoto}" class="img-bg" alt="" aria-hidden="true">
-              <img src="${mainPhoto}" class="img-fg" alt="${v.marque} ${v.modele}">
+              <img src="${mainPhoto}" alt="${v.marque} ${v.modele}">
               ${v.vendu ? '<span class="sold-badge">VENDU</span>' : ''}
             </div>
             <div class="card-content">
@@ -552,8 +534,7 @@
 
           <div class="gallery">
             <div class="main-img" id="main-image-container">
-              <img src="${v.photos[0]}" class="img-bg" alt="" aria-hidden="true" id="main-image-bg">
-              <img src="${v.photos[0]}" class="img-fg" id="main-image">
+              <img src="${v.photos[0]}" id="main-image">
             </div>
             ${v.photos.length > 1 ? `<div class="thumbnails" id="thumbnails">${thumbsHtml}</div>` : ''}
           </div>
@@ -576,7 +557,6 @@
 
     window.changeMainImage = function(thumb, src) {
       document.getElementById('main-image').src = src;
-      document.getElementById('main-image-bg').src = src;
       document.querySelectorAll('.thumbnails img').forEach(img => img.classList.remove('active'));
       thumb.classList.add('active');
     };
