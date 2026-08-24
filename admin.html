@@ -122,7 +122,7 @@
       font-family: 'Oswald', sans-serif; text-transform: uppercase;
       color: var(--paper); font-size: 1.05rem; margin-bottom: 0.9rem;
     }
-    .crop-container { max-height: 55vh; background: #000; border-radius: 10px; overflow: hidden; }
+    .crop-container { max-height: 55vh; min-height: 260px; background: #000; border-radius: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
     .crop-container img { max-width: 100%; display: block; }
     .crop-actions {
       display: flex; justify-content: space-between; align-items: center;
@@ -203,6 +203,8 @@
             <small style="display:block; color:var(--ash-500); margin-top:0.4rem; font-size:0.8rem;">
               Vous pouvez sélectionner plusieurs photos à la fois. La première sera l'image principale.
             </small>
+            <div id="preCropPreview" style="display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.8rem;"></div>
+            <button type="button" id="startCropBtn" class="hidden" style="margin-top:0.7rem; background:var(--gold-500); color:var(--navy-950);" onclick="startCropQueue()">Recadrer ces photos →</button>
             <div id="photoPreviews" style="display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.8rem;"></div>
           </div>
 
@@ -240,7 +242,10 @@
   <!-- Modale de recadrage -->
   <div id="crop-overlay" class="crop-overlay hidden">
     <div class="crop-modal">
-      <h3>Recadrer la photo</h3>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+        <h3 style="margin-bottom:0;">Recadrer la photo</h3>
+        <button type="button" onclick="cancelCropQueue()" style="background:var(--navy-700); color:var(--paper); width:32px; height:32px; border-radius:50%; padding:0; margin:0; font-size:1rem;">✕</button>
+      </div>
       <div class="crop-progress" id="crop-progress"></div>
       <div class="crop-container">
         <img id="crop-image" src="">
@@ -252,7 +257,10 @@
           <button type="button" data-ratio="1" onclick="setCropRatio(1, this)">Carré</button>
           <button type="button" data-ratio="0" onclick="setCropRatio(NaN, this)">Libre</button>
         </div>
-        <button type="button" onclick="validateCrop()" style="background:var(--gold-500); color:var(--navy-950);">Valider ✓</button>
+        <div style="display:flex; gap:0.5rem;">
+          <button type="button" class="secondary" onclick="cancelCropQueue()">Annuler tout</button>
+          <button type="button" onclick="validateCrop()" style="background:var(--gold-500); color:var(--navy-950);">Valider ✓</button>
+        </div>
       </div>
     </div>
   </div>
@@ -348,29 +356,109 @@
       if (files.length === 0) return;
       cropQueue = files;
       cropIndex = 0;
-      openCropModal();
+      renderPreCropPreview();
       e.target.value = '';
     });
 
+    function renderPreCropPreview() {
+      const container = document.getElementById('preCropPreview');
+      const startBtn = document.getElementById('startCropBtn');
+
+      if (cropQueue.length === 0) {
+        container.innerHTML = '';
+        startBtn.classList.add('hidden');
+        return;
+      }
+
+      container.innerHTML = cropQueue.map((file, i) => {
+        const url = URL.createObjectURL(file);
+        return `
+          <div style="position:relative;">
+            <img src="${url}" style="width:70px; height:70px; object-fit:cover; border-radius:8px; border:1px solid var(--navy-700);">
+            <button type="button" onclick="removeFromCropQueue(${i})" style="position:absolute; top:-6px; right:-6px; width:20px; height:20px; border-radius:50%; background:var(--danger); color:white; border:none; cursor:pointer; font-size:0.7rem; padding:0; line-height:1;">✕</button>
+          </div>
+        `;
+      }).join('');
+
+      startBtn.classList.remove('hidden');
+      startBtn.textContent = `Recadrer ${cropQueue.length > 1 ? 'ces ' + cropQueue.length + ' photos' : 'cette photo'} →`;
+    }
+
+    window.removeFromCropQueue = function(index) {
+      cropQueue.splice(index, 1);
+      renderPreCropPreview();
+    };
+
+    window.startCropQueue = function() {
+      cropIndex = 0;
+      document.getElementById('preCropPreview').innerHTML = '';
+      document.getElementById('startCropBtn').classList.add('hidden');
+      openCropModal();
+    };
+
     function openCropModal() {
       const file = cropQueue[cropIndex];
+
+      if (!file) {
+        cancelCropQueue();
+        return;
+      }
+
+      document.getElementById('crop-overlay').classList.remove('hidden');
+      document.getElementById('crop-progress').textContent =
+        `Chargement de la photo ${cropIndex + 1} sur ${cropQueue.length}...`;
+
       const reader = new FileReader();
+
+      reader.onerror = () => {
+        alert(`Impossible de lire le fichier "${file.name}". Photo ignorée.`);
+        cropIndex++;
+        openCropModal();
+      };
+
       reader.onload = (ev) => {
-        document.getElementById('crop-image').src = ev.target.result;
+        const imgEl = document.getElementById('crop-image');
+        imgEl.onerror = () => {
+          alert(`Le fichier "${file.name}" ne semble pas être une image valide. Photo ignorée.`);
+          cropIndex++;
+          openCropModal();
+        };
+        imgEl.src = ev.target.result;
         document.getElementById('crop-progress').textContent =
           `Photo ${cropIndex + 1} sur ${cropQueue.length}`;
-        document.getElementById('crop-overlay').classList.remove('hidden');
 
-        if (cropper) cropper.destroy();
-        cropper = new Cropper(document.getElementById('crop-image'), {
-          aspectRatio: currentCropRatio,
-          viewMode: 1,
-          autoCropArea: 1,
-          background: false,
-        });
+        if (cropper) { cropper.destroy(); cropper = null; }
+        try {
+          cropper = new Cropper(imgEl, {
+            aspectRatio: currentCropRatio,
+            viewMode: 1,
+            autoCropArea: 1,
+            background: false,
+          });
+        } catch (err) {
+          alert('Erreur lors de l\'ouverture de l\'outil de recadrage. Photo ignorée.');
+          cropIndex++;
+          openCropModal();
+        }
       };
+
       reader.readAsDataURL(file);
     }
+
+    window.cancelCropQueue = function() {
+      if (cropper) { cropper.destroy(); cropper = null; }
+      cropQueue = [];
+      cropIndex = 0;
+      document.getElementById('crop-overlay').classList.add('hidden');
+      document.getElementById('preCropPreview').innerHTML = '';
+      document.getElementById('startCropBtn').classList.add('hidden');
+    };
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !document.getElementById('crop-overlay').classList.contains('hidden')) {
+        cancelCropQueue();
+      }
+    });
 
     window.setCropRatio = function(ratio, btn) {
       currentCropRatio = ratio;
@@ -395,6 +483,8 @@
       } else {
         cropper.destroy();
         cropper = null;
+        cropQueue = [];
+        cropIndex = 0;
         document.getElementById('crop-overlay').classList.add('hidden');
       }
     };
@@ -505,6 +595,10 @@
       document.getElementById('editId').value = '';
       currentPhotos = [];
       renderPhotoPreviews();
+      cropQueue = [];
+      cropIndex = 0;
+      document.getElementById('preCropPreview').innerHTML = '';
+      document.getElementById('startCropBtn').classList.add('hidden');
     };
   </script>
 </body>
