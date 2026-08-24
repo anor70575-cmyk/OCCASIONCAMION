@@ -168,8 +168,18 @@
           </div>
 
           <div class="form-group">
-            <label>Photos (URLs séparées par des virgules) *</label>
-            <input type="text" id="photos" placeholder="https://... , https://..." required>
+            <label>Photos (depuis votre ordinateur ou téléphone) *</label>
+            <input type="file" id="photoFiles" accept="image/*" multiple>
+            <small style="display:block; color:var(--ash-500); margin-top:0.4rem; font-size:0.8rem;">
+              Vous pouvez sélectionner plusieurs photos à la fois. La première sera l'image principale.
+            </small>
+            <div id="photoPreviews" style="display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.8rem;"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Ou coller un lien de photo (optionnel)</label>
+            <input type="text" id="photoUrlInput" placeholder="https://...">
+            <button type="button" class="secondary" style="margin-top:0.5rem;" onclick="addPhotoUrl()">Ajouter ce lien</button>
           </div>
 
           <div class="form-group">
@@ -247,6 +257,73 @@
     }
 
     let vehicles = [];
+    let currentPhotos = []; // tableau de {src, isNew} pour l'aperçu en cours d'édition
+
+    // ---- Compression d'image côté navigateur (redimensionne + compresse en JPEG) ----
+    function compressImage(file, maxWidth = 1280, quality = 0.75) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            let { width, height } = img;
+            if (width > maxWidth) {
+              height = Math.round(height * (maxWidth / width));
+              width = maxWidth;
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderPhotoPreviews() {
+      const container = document.getElementById('photoPreviews');
+      container.innerHTML = currentPhotos.map((p, i) => `
+        <div style="position:relative;">
+          <img src="${p}" style="width:80px; height:80px; object-fit:cover; border-radius:10px; border:1px solid var(--navy-700);">
+          <button type="button" onclick="removePhoto(${i})" style="position:absolute; top:-6px; right:-6px; width:22px; height:22px; border-radius:50%; background:var(--danger); color:white; border:none; cursor:pointer; font-size:0.75rem; padding:0; line-height:1;">✕</button>
+          ${i === 0 ? '<span style="position:absolute; bottom:2px; left:2px; background:rgba(0,0,0,0.65); color:var(--gold-400); font-size:0.6rem; padding:1px 5px; border-radius:6px;">Principale</span>' : ''}
+        </div>
+      `).join('');
+    }
+
+    window.removePhoto = function(index) {
+      currentPhotos.splice(index, 1);
+      renderPhotoPreviews();
+    };
+
+    window.addPhotoUrl = function() {
+      const input = document.getElementById('photoUrlInput');
+      const url = input.value.trim();
+      if (!url) return;
+      currentPhotos.push(url);
+      input.value = '';
+      renderPhotoPreviews();
+    };
+
+    document.getElementById('photoFiles').addEventListener('change', async (e) => {
+      const files = Array.from(e.target.files);
+      for (const file of files) {
+        try {
+          const compressed = await compressImage(file);
+          currentPhotos.push(compressed);
+        } catch (err) {
+          console.error('Erreur de traitement image:', err);
+        }
+      }
+      renderPhotoPreviews();
+      e.target.value = ''; // reset l'input pour pouvoir re-sélectionner les mêmes fichiers si besoin
+    });
 
     function loadData() {
       vehicles = loadVehicles();
@@ -277,8 +354,12 @@
     document.getElementById('vehicleForm').addEventListener('submit', (e) => {
       e.preventDefault();
 
+      if (currentPhotos.length === 0) {
+        alert('Ajoute au moins une photo avant d\'enregistrer.');
+        return;
+      }
+
       const id = document.getElementById('editId').value || 'v_' + Date.now();
-      const photos = document.getElementById('photos').value.split(',').map(s => s.trim()).filter(Boolean);
 
       const vehicle = {
         id,
@@ -289,7 +370,7 @@
         carburant: document.getElementById('carburant').value,
         boite: document.getElementById('boite').value,
         prix: Number(document.getElementById('prix').value),
-        photos: photos,
+        photos: [...currentPhotos],
         description: document.getElementById('description').value,
         vendu: document.getElementById('vendu').checked
       };
@@ -301,7 +382,13 @@
         vehicles.push(vehicle);
       }
 
-      saveVehicles(vehicles);
+      try {
+        saveVehicles(vehicles);
+      } catch (err) {
+        alert('Espace de stockage plein ! Réduis le nombre ou la taille des photos, ou supprime un véhicule existant pour libérer de la place.');
+        return;
+      }
+
       clearForm();
       renderList();
     });
@@ -316,9 +403,10 @@
       document.getElementById('boite').value = v.boite;
       document.getElementById('prix').value = v.prix;
       document.getElementById('vendu').checked = v.vendu;
-      document.getElementById('photos').value = v.photos.join(', ');
       document.getElementById('description').value = v.description;
       document.getElementById('editId').value = v.id;
+      currentPhotos = [...v.photos];
+      renderPhotoPreviews();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -341,6 +429,8 @@
     window.clearForm = () => {
       document.getElementById('vehicleForm').reset();
       document.getElementById('editId').value = '';
+      currentPhotos = [];
+      renderPhotoPreviews();
     };
   </script>
 </body>
