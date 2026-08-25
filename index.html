@@ -403,81 +403,61 @@
     <br><span style="color: var(--gold-400); font-family: 'Oswald', sans-serif; letter-spacing: 0.03em;">Celia répond 24h/24 · 7j/7</span>
   </footer>
 
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getDatabase, ref, onValue }
+      from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD8uYtfLlpwwYQSRrDuqLbeHh2xFwmjxdE",
+      authDomain: "nordine-camions.firebaseapp.com",
+      databaseURL: "https://nordine-camions-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "nordine-camions",
+      storageBucket: "nordine-camions.firebasestorage.app",
+      messagingSenderId: "762936570358",
+      appId: "1:762936570358:web:b635259828ca5cac5817d7"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Écoute en temps réel : dès qu'un véhicule est ajouté/modifié/supprimé depuis
+    // l'admin, la page se met à jour automatiquement pour tous les visiteurs,
+    // sans qu'ils aient besoin de recharger.
+    onValue(ref(db, 'vehicles'), (snapshot) => {
+      const data = snapshot.val() || {};
+      window.__setVehicles(Object.values(data));
+    });
+  </script>
+
   <script>
-    const STORAGE_KEY = 'nordine_vehicles_public';
     const WHATSAPP = '33774670686';
 
-    const defaultVehicles = [
-      {
-        id: 'v1',
-        marque: 'Renault',
-        modele: 'Premium 280',
-        annee: 2007,
-        km: '1 000 000 km',
-        carburant: 'Diesel',
-        boite: 'Manuelle',
-        prix: 5000,
-        photos: ['https://i.postimg.cc/dVm0kq6H/Whats-App-Image-2025-10-14-at-12-00-02-1-imageonline-co-merged.jpg'],
-        description: 'Renault Premium 280 caisse, prêt à travailler.',
-        vendu: false
-      },
-      {
-        id: 'v2',
-        marque: 'Renault',
-        modele: 'Premium 390',
-        annee: 2012,
-        km: '620 000 km',
-        carburant: 'Diesel',
-        boite: 'Manuelle',
-        prix: 11000,
-        photos: ['https://i.postimg.cc/VN31THWd/Whats-App-Image-2025-10-14-at-12-00-02-4.jpg'],
-        description: 'Renault Premium 390 caisse frigo / Carrier.',
-        vendu: false
-      },
-      {
-        id: 'v3',
-        marque: 'Mercedes',
-        modele: 'Actros 1848',
-        annee: 2016,
-        km: '700 000 km',
-        carburant: 'Diesel',
-        boite: 'Automatique',
-        prix: 17000,
-        photos: ['https://i.postimg.cc/yY1VrLXY/Whats-App-Image-2025-10-14-at-12-00-03-1-imageonline-co-merged.jpg'],
-        description: 'Mercedes Actros 1848, tracteur routier.',
-        vendu: false
-      },
-      {
-        id: 'v4',
-        marque: 'Scania',
-        modele: 'R-450',
-        annee: 2016,
-        km: '850 000 km',
-        carburant: 'Diesel',
-        boite: 'Automatique',
-        prix: 20000,
-        photos: ['https://i.postimg.cc/Y24V2Yrb/Whats-App-Image-2025-10-14-at-12-00-02-1-imageonline-co-merged.jpg'],
-        description: 'Scania R-450, tracteur routier.',
-        vendu: false
-      }
-    ];
+    let vehicles = [];
 
-    function loadVehicles() {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) return JSON.parse(stored);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultVehicles));
-      return defaultVehicles;
-    }
-
-    let vehicles = loadVehicles();
+    // Appelée par le listener Firebase ci-dessus à chaque mise à jour des données
+    window.__setVehicles = function (list) {
+      vehicles = list;
+      vehiclesLoaded = true;
+      renderGrid();
+    };
 
     function waLink(v) {
       const msg = encodeURIComponent(`Bonjour, je suis intéressé par le ${v.marque} ${v.modele} (${v.annee})`);
       return `https://wa.me/${WHATSAPP}?text=${msg}`;
     }
 
+    let vehiclesLoaded = false; // passe à true dès la première réponse de Firebase (même si vide)
+
     function renderGrid() {
       const grid = document.getElementById('vehicle-grid');
+
+      if (!vehiclesLoaded) {
+        document.getElementById('vehicle-count').textContent = '';
+        grid.innerHTML = '<div class="empty-state">Chargement des véhicules...</div>';
+        return;
+      }
+
       document.getElementById('vehicle-count').textContent = vehicles.length + ' véhicule' + (vehicles.length > 1 ? 's' : '');
 
       if (vehicles.length === 0) {
@@ -566,6 +546,7 @@
       document.getElementById('detail-view').classList.add('hidden');
     };
 
+    // Affichage initial "en attente de connexion" pendant que Firebase charge les données
     renderGrid();
   </script>
 </body>
