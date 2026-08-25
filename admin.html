@@ -12,7 +12,6 @@
   <style>
     :root {
       --navy-950: #060c17;
-      --navy-900: #0b1626;
       --navy-800: #12213a;
       --navy-700: #1b2f4d;
       --gold-400: #f5c33b;
@@ -21,7 +20,6 @@
       --ash-300: #a9b4c4;
       --ash-500: #6c7a90;
       --danger: #e0453a;
-      --whatsapp: #25d366;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -30,7 +28,7 @@
       font-family: 'Inter', system-ui, sans-serif;
       padding: 2rem 1.4rem;
     }
-    h1, h2, .display {
+    h1, h2 {
       font-family: 'Oswald', sans-serif;
       text-transform: uppercase;
       letter-spacing: 0.02em;
@@ -101,55 +99,89 @@
     .checkbox input { width: auto; }
     .password-screen { text-align: center; padding: 3.5rem 1.5rem; }
     .password-screen input { max-width: 280px; margin: 1.2rem auto; }
-    .password-screen h1 { margin-bottom: 0.4rem; }
     .password-screen p { color: var(--ash-300); font-size: 0.9rem; }
     .error { color: var(--danger); margin-top: 0.8rem; font-size: 0.88rem; }
-    .hidden { display: none; }
+    .hidden { display: none !important; }
     .footer-links { margin-top: 1.6rem; color: var(--ash-300); font-size: 0.88rem; }
     .footer-links a { color: var(--gold-400); text-decoration: none; }
 
+    .photo-thumb {
+      position: relative; width: 90px; height: 90px; flex-shrink: 0;
+      border-radius: 10px; border: 2px solid var(--navy-700);
+      overflow: hidden; background: var(--navy-950);
+    }
+    .photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .photo-thumb .remove-btn {
+      position: absolute; top: -8px; right: -8px; width: 24px; height: 24px;
+      border-radius: 50%; background: var(--danger); color: white; border: none;
+      cursor: pointer; font-size: 0.8rem; padding: 0; margin: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .photo-thumb .badge {
+      position: absolute; bottom: 4px; left: 4px;
+      background: rgba(0,0,0,0.75); color: var(--gold-400);
+      font-size: 0.6rem; padding: 2px 8px; border-radius: 6px;
+      font-family: 'Oswald', sans-serif; text-transform: uppercase;
+    }
+    #photoPreviews, #preCropPreview { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 0.7rem; }
+
     /* ---------- Modale de recadrage ---------- */
     .crop-overlay {
-      position: fixed; inset: 0; background: rgba(6,12,23,0.9);
+      position: fixed; inset: 0; background: rgba(6,12,23,0.92);
       z-index: 1000; display: flex; align-items: center; justify-content: center;
       padding: 1.2rem;
     }
     .crop-modal {
       background: var(--navy-800); border: 1px solid var(--navy-700);
-      border-radius: 20px; padding: 1.4rem; max-width: 560px; width: 100%;
+      border-radius: 20px; padding: 1.4rem; max-width: 620px; width: 100%;
+      max-height: 90vh; overflow-y: auto;
     }
-    .crop-modal h3 {
+    .crop-modal-head {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;
+    }
+    .crop-modal-head h3 {
       font-family: 'Oswald', sans-serif; text-transform: uppercase;
-      color: var(--paper); font-size: 1.05rem; margin-bottom: 0.9rem;
+      color: var(--paper); font-size: 1.05rem;
     }
-    .crop-container { max-height: 55vh; min-height: 260px; background: #000; border-radius: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .crop-close-btn {
+      background: var(--navy-700); color: var(--paper);
+      width: 32px; height: 32px; border-radius: 50%;
+      padding: 0; margin: 0; font-size: 1rem; line-height: 1;
+    }
+    .crop-progress { color: var(--ash-500); font-size: 0.8rem; margin-bottom: 0.7rem; }
+    .crop-container {
+      min-height: 280px; max-height: 55vh; background: #000;
+      border-radius: 10px; overflow: hidden;
+    }
     .crop-container img { max-width: 100%; display: block; }
     .crop-actions {
       display: flex; justify-content: space-between; align-items: center;
       margin-top: 1.1rem; gap: 0.6rem; flex-wrap: wrap;
     }
-    .crop-ratio-buttons { display: flex; gap: 0.4rem; }
+    .crop-ratio-buttons { display: flex; gap: 0.4rem; flex-wrap: wrap; }
     .crop-ratio-buttons button {
       background: var(--navy-700); color: var(--ash-300);
       font-size: 0.78rem; padding: 0.4rem 0.8rem; margin: 0;
     }
     .crop-ratio-buttons button.active { background: var(--gold-500); color: var(--navy-950); }
-    .crop-progress { color: var(--ash-500); font-size: 0.8rem; margin-bottom: 0.7rem; }
   </style>
 </head>
 <body>
   <div class="container">
+
     <div id="login-screen" class="card password-screen">
       <h1>🔒 Accès administrateur</h1>
       <p>Entre le mot de passe pour gérer le stock de véhicules.</p>
       <input type="password" id="password-input" placeholder="Mot de passe">
-      <div><button onclick="checkPassword()">Se connecter</button></div>
+      <div><button type="button" onclick="checkPassword()">Se connecter</button></div>
       <div id="password-error" class="error"></div>
     </div>
 
     <div id="admin-panel" class="hidden">
       <h1>Administration — Nordine</h1>
-      <p style="color:var(--ash-300); margin-bottom: 1.6rem; font-size:0.9rem;">Ajoute, modifie ou marque comme vendus tes véhicules. Les changements s'affichent immédiatement sur le site public.</p>
+      <p style="color:var(--ash-300); margin-bottom: 1.6rem; font-size:0.9rem;">
+        Ajoute, modifie ou marque comme vendus tes véhicules. Les changements s'affichent immédiatement sur le site public.
+      </p>
 
       <div class="card">
         <h2>Ajouter / modifier un véhicule</h2>
@@ -201,11 +233,11 @@
             <label>Photos (depuis votre ordinateur ou téléphone) *</label>
             <input type="file" id="photoFiles" accept="image/*" multiple>
             <small style="display:block; color:var(--ash-500); margin-top:0.4rem; font-size:0.8rem;">
-              Vous pouvez sélectionner plusieurs photos à la fois. La première sera l'image principale.
+              Sélectionnez une ou plusieurs photos. La première sera l'image principale.
             </small>
-            <div id="preCropPreview" style="display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.8rem;"></div>
-            <button type="button" id="startCropBtn" class="hidden" style="margin-top:0.7rem; background:var(--gold-500); color:var(--navy-950);" onclick="startCropQueue()">Recadrer ces photos →</button>
-            <div id="photoPreviews" style="display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.8rem;"></div>
+            <div id="preCropPreview"></div>
+            <button type="button" id="startCropBtn" class="hidden" onclick="startCropQueue()">Recadrer →</button>
+            <div id="photoPreviews"></div>
           </div>
 
           <div class="form-group">
@@ -234,41 +266,45 @@
       <div class="footer-links">
         <a href="index.html" target="_blank">← Voir le site public</a>
         &nbsp;&nbsp;·&nbsp;&nbsp;
-        <button onclick="logout()" class="secondary">Déconnexion</button>
+        <button type="button" onclick="logout()" class="secondary">Déconnexion</button>
       </div>
     </div>
+
   </div>
 
-  <!-- Modale de recadrage -->
+  <!-- Modale de recadrage : masquée par défaut, jamais visible au chargement de la page -->
   <div id="crop-overlay" class="crop-overlay hidden">
     <div class="crop-modal">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
-        <h3 style="margin-bottom:0;">Recadrer la photo</h3>
-        <button type="button" onclick="cancelCropQueue()" style="background:var(--navy-700); color:var(--paper); width:32px; height:32px; border-radius:50%; padding:0; margin:0; font-size:1rem;">✕</button>
+      <div class="crop-modal-head">
+        <h3>Recadrer la photo</h3>
+        <button type="button" class="crop-close-btn" onclick="cancelCropQueue()">✕</button>
       </div>
       <div class="crop-progress" id="crop-progress"></div>
       <div class="crop-container">
-        <img id="crop-image" src="">
+        <img id="crop-image" alt="">
       </div>
       <div class="crop-actions">
         <div class="crop-ratio-buttons">
-          <button type="button" class="active" data-ratio="1.3333" onclick="setCropRatio(4/3, this)">4:3</button>
-          <button type="button" data-ratio="1.7778" onclick="setCropRatio(16/9, this)">16:9</button>
-          <button type="button" data-ratio="1" onclick="setCropRatio(1, this)">Carré</button>
-          <button type="button" data-ratio="0" onclick="setCropRatio(NaN, this)">Libre</button>
+          <button type="button" class="active" onclick="setCropRatio(4/3, this)">4:3</button>
+          <button type="button" onclick="setCropRatio(16/9, this)">16:9</button>
+          <button type="button" onclick="setCropRatio(1, this)">Carré</button>
+          <button type="button" onclick="setCropRatio(NaN, this)">Libre</button>
         </div>
         <div style="display:flex; gap:0.5rem;">
           <button type="button" class="secondary" onclick="cancelCropQueue()">Annuler tout</button>
-          <button type="button" onclick="validateCrop()" style="background:var(--gold-500); color:var(--navy-950);">Valider ✓</button>
+          <button type="button" id="validateCropBtn" onclick="validateCrop()">Valider ✓</button>
         </div>
       </div>
     </div>
   </div>
 
   <script>
+    // =========================================================
+    // AUTHENTIFICATION
+    // =========================================================
     const ADMIN_PASSWORD = "nordine2025";
 
-    window.checkPassword = function() {
+    window.checkPassword = function () {
       const input = document.getElementById('password-input').value;
       if (input === ADMIN_PASSWORD) {
         document.getElementById('login-screen').classList.add('hidden');
@@ -280,12 +316,15 @@
       }
     };
 
-    window.logout = function() {
+    window.logout = function () {
       document.getElementById('login-screen').classList.remove('hidden');
       document.getElementById('admin-panel').classList.add('hidden');
       document.getElementById('password-input').value = '';
     };
 
+    // =========================================================
+    // STOCKAGE DES VÉHICULES (localStorage)
+    // =========================================================
     const STORAGE_KEY = 'nordine_vehicles_public';
 
     const defaultVehicles = [
@@ -294,12 +333,6 @@
         km: '1 000 000 km', carburant: 'Diesel', boite: 'Manuelle', prix: 5000,
         photos: ['https://i.postimg.cc/dVm0kq6H/Whats-App-Image-2025-10-14-at-12-00-02-1-imageonline-co-merged.jpg'],
         description: 'Renault Premium 280 caisse, prêt à travailler.', vendu: false
-      },
-      {
-        id: 'v2', marque: 'Renault', modele: 'Premium 390', annee: 2012,
-        km: '620 000 km', carburant: 'Diesel', boite: 'Manuelle', prix: 11000,
-        photos: ['https://i.postimg.cc/VN31THWd/Whats-App-Image-2025-10-14-at-12-00-02-4.jpg'],
-        description: 'Renault Premium 390 caisse frigo / Carrier.', vendu: false
       }
     ];
 
@@ -310,184 +343,12 @@
       return defaultVehicles;
     }
 
-    function saveVehicles(vehicles) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(vehicles));
+    function saveVehicles(list) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
     }
 
     let vehicles = [];
-    let currentPhotos = []; // tableau de {src, isNew} pour l'aperçu en cours d'édition
-
-    // Note : Cropper.js gère nativement l'orientation EXIF des photos de téléphone,
-    // donc pas besoin de traitement séparé pour ça.
-
-    function renderPhotoPreviews() {
-      const container = document.getElementById('photoPreviews');
-      container.innerHTML = currentPhotos.map((p, i) => `
-        <div style="position:relative;">
-          <img src="${p}" style="width:80px; height:80px; object-fit:cover; border-radius:10px; border:1px solid var(--navy-700);">
-          <button type="button" onclick="removePhoto(${i})" style="position:absolute; top:-6px; right:-6px; width:22px; height:22px; border-radius:50%; background:var(--danger); color:white; border:none; cursor:pointer; font-size:0.75rem; padding:0; line-height:1;">✕</button>
-          ${i === 0 ? '<span style="position:absolute; bottom:2px; left:2px; background:rgba(0,0,0,0.65); color:var(--gold-400); font-size:0.6rem; padding:1px 5px; border-radius:6px;">Principale</span>' : ''}
-        </div>
-      `).join('');
-    }
-
-    window.removePhoto = function(index) {
-      currentPhotos.splice(index, 1);
-      renderPhotoPreviews();
-    };
-
-    window.addPhotoUrl = function() {
-      const input = document.getElementById('photoUrlInput');
-      const url = input.value.trim();
-      if (!url) return;
-      currentPhotos.push(url);
-      input.value = '';
-      renderPhotoPreviews();
-    };
-
-    // ---- File d'attente de recadrage : les photos sélectionnées passent une par une par l'outil ----
-    let cropQueue = [];
-    let cropIndex = 0;
-    let cropper = null;
-    let currentCropRatio = 4 / 3;
-
-    document.getElementById('photoFiles').addEventListener('change', (e) => {
-      const files = Array.from(e.target.files);
-      if (files.length === 0) return;
-      cropQueue = files;
-      cropIndex = 0;
-      renderPreCropPreview();
-      e.target.value = '';
-    });
-
-    function renderPreCropPreview() {
-      const container = document.getElementById('preCropPreview');
-      const startBtn = document.getElementById('startCropBtn');
-
-      if (cropQueue.length === 0) {
-        container.innerHTML = '';
-        startBtn.classList.add('hidden');
-        return;
-      }
-
-      container.innerHTML = cropQueue.map((file, i) => {
-        const url = URL.createObjectURL(file);
-        return `
-          <div style="position:relative;">
-            <img src="${url}" style="width:70px; height:70px; object-fit:cover; border-radius:8px; border:1px solid var(--navy-700);">
-            <button type="button" onclick="removeFromCropQueue(${i})" style="position:absolute; top:-6px; right:-6px; width:20px; height:20px; border-radius:50%; background:var(--danger); color:white; border:none; cursor:pointer; font-size:0.7rem; padding:0; line-height:1;">✕</button>
-          </div>
-        `;
-      }).join('');
-
-      startBtn.classList.remove('hidden');
-      startBtn.textContent = `Recadrer ${cropQueue.length > 1 ? 'ces ' + cropQueue.length + ' photos' : 'cette photo'} →`;
-    }
-
-    window.removeFromCropQueue = function(index) {
-      cropQueue.splice(index, 1);
-      renderPreCropPreview();
-    };
-
-    window.startCropQueue = function() {
-      cropIndex = 0;
-      document.getElementById('preCropPreview').innerHTML = '';
-      document.getElementById('startCropBtn').classList.add('hidden');
-      openCropModal();
-    };
-
-    function openCropModal() {
-      const file = cropQueue[cropIndex];
-
-      if (!file) {
-        cancelCropQueue();
-        return;
-      }
-
-      document.getElementById('crop-overlay').classList.remove('hidden');
-      document.getElementById('crop-progress').textContent =
-        `Chargement de la photo ${cropIndex + 1} sur ${cropQueue.length}...`;
-
-      const reader = new FileReader();
-
-      reader.onerror = () => {
-        alert(`Impossible de lire le fichier "${file.name}". Photo ignorée.`);
-        cropIndex++;
-        openCropModal();
-      };
-
-      reader.onload = (ev) => {
-        const imgEl = document.getElementById('crop-image');
-        imgEl.onerror = () => {
-          alert(`Le fichier "${file.name}" ne semble pas être une image valide. Photo ignorée.`);
-          cropIndex++;
-          openCropModal();
-        };
-        imgEl.src = ev.target.result;
-        document.getElementById('crop-progress').textContent =
-          `Photo ${cropIndex + 1} sur ${cropQueue.length}`;
-
-        if (cropper) { cropper.destroy(); cropper = null; }
-        try {
-          cropper = new Cropper(imgEl, {
-            aspectRatio: currentCropRatio,
-            viewMode: 1,
-            autoCropArea: 1,
-            background: false,
-          });
-        } catch (err) {
-          alert('Erreur lors de l\'ouverture de l\'outil de recadrage. Photo ignorée.');
-          cropIndex++;
-          openCropModal();
-        }
-      };
-
-      reader.readAsDataURL(file);
-    }
-
-    window.cancelCropQueue = function() {
-      if (cropper) { cropper.destroy(); cropper = null; }
-      cropQueue = [];
-      cropIndex = 0;
-      document.getElementById('crop-overlay').classList.add('hidden');
-      document.getElementById('preCropPreview').innerHTML = '';
-      document.getElementById('startCropBtn').classList.add('hidden');
-    };
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !document.getElementById('crop-overlay').classList.contains('hidden')) {
-        cancelCropQueue();
-      }
-    });
-
-    window.setCropRatio = function(ratio, btn) {
-      currentCropRatio = ratio;
-      document.querySelectorAll('.crop-ratio-buttons button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      if (cropper) cropper.setAspectRatio(isNaN(ratio) ? NaN : ratio);
-    };
-
-    window.validateCrop = function() {
-      const canvas = cropper.getCroppedCanvas({
-        maxWidth: 1280,
-        maxHeight: 1280,
-        imageSmoothingQuality: 'high',
-      });
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.78);
-      currentPhotos.push(dataUrl);
-      renderPhotoPreviews();
-
-      cropIndex++;
-      if (cropIndex < cropQueue.length) {
-        openCropModal();
-      } else {
-        cropper.destroy();
-        cropper = null;
-        cropQueue = [];
-        cropIndex = 0;
-        document.getElementById('crop-overlay').classList.add('hidden');
-      }
-    };
+    let currentPhotos = []; // photos déjà validées, prêtes à être enregistrées avec le véhicule
 
     function loadData() {
       vehicles = loadVehicles();
@@ -507,14 +368,229 @@
             ${v.vendu ? '<span class="sold-badge">VENDU</span>' : ''}
           </div>
           <div class="actions">
-            <button onclick="editVehicle('${v.id}')">Modifier</button>
-            <button onclick="toggleSold('${v.id}')">${v.vendu ? 'Remettre en vente' : 'Marquer vendu'}</button>
-            <button class="danger" onclick="deleteVehicle('${v.id}')">Supprimer</button>
+            <button type="button" onclick="editVehicle('${v.id}')">Modifier</button>
+            <button type="button" onclick="toggleSold('${v.id}')">${v.vendu ? 'Remettre en vente' : 'Marquer vendu'}</button>
+            <button type="button" class="danger" onclick="deleteVehicle('${v.id}')">Supprimer</button>
           </div>
         </div>
       `).join('');
     }
 
+    // =========================================================
+    // APERÇU DES PHOTOS DÉJÀ VALIDÉES (celles qui seront enregistrées)
+    // =========================================================
+    function renderPhotoPreviews() {
+      const container = document.getElementById('photoPreviews');
+      container.innerHTML = currentPhotos.map((src, i) => `
+        <div class="photo-thumb">
+          <img src="${src}" alt="Photo ${i + 1}">
+          <button type="button" class="remove-btn" onclick="removePhoto(${i})">✕</button>
+          ${i === 0 ? '<span class="badge">Principale</span>' : ''}
+        </div>
+      `).join('');
+    }
+
+    window.removePhoto = function (index) {
+      currentPhotos.splice(index, 1);
+      renderPhotoPreviews();
+    };
+
+    window.addPhotoUrl = function () {
+      const input = document.getElementById('photoUrlInput');
+      const url = input.value.trim();
+      if (!url) return;
+      currentPhotos.push(url);
+      input.value = '';
+      renderPhotoPreviews();
+    };
+
+    // =========================================================
+    // ÉTAPE 1 : sélection des fichiers -> aperçu "brut" avant recadrage
+    // =========================================================
+    let cropQueue = [];   // fichiers en attente de recadrage
+    let cropIndex = 0;    // position actuelle dans la file
+    let cropper = null;   // instance Cropper.js active
+    let currentCropRatio = 4 / 3;
+
+    document.getElementById('photoFiles').addEventListener('change', function (e) {
+      const files = Array.from(e.target.files);
+      e.target.value = ''; // permet de re-sélectionner les mêmes fichiers plus tard si besoin
+      if (files.length === 0) return;
+
+      cropQueue = files;
+      cropIndex = 0;
+      renderPreCropPreview();
+    });
+
+    function renderPreCropPreview() {
+      const container = document.getElementById('preCropPreview');
+      const startBtn = document.getElementById('startCropBtn');
+
+      if (cropQueue.length === 0) {
+        container.innerHTML = '';
+        startBtn.classList.add('hidden');
+        return;
+      }
+
+      container.innerHTML = cropQueue.map((file, i) => {
+        const url = URL.createObjectURL(file);
+        return `
+          <div class="photo-thumb">
+            <img src="${url}" alt="Sélection ${i + 1}">
+            <button type="button" class="remove-btn" onclick="removeFromCropQueue(${i})">✕</button>
+          </div>
+        `;
+      }).join('');
+
+      startBtn.classList.remove('hidden');
+      startBtn.textContent = cropQueue.length > 1
+        ? `Recadrer ces ${cropQueue.length} photos →`
+        : 'Recadrer cette photo →';
+    }
+
+    window.removeFromCropQueue = function (index) {
+      cropQueue.splice(index, 1);
+      renderPreCropPreview();
+    };
+
+    window.startCropQueue = function () {
+      cropIndex = 0;
+      document.getElementById('preCropPreview').innerHTML = '';
+      document.getElementById('startCropBtn').classList.add('hidden');
+      openCropModal();
+    };
+
+    // =========================================================
+    // ÉTAPE 2 : recadrage photo par photo
+    // =========================================================
+
+    // Charge un fichier en data URL, sous forme de Promise (plus simple à enchaîner
+    // proprement qu'avec des callbacks imbriqués).
+    function readFileAsDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = () => reject(new Error('Lecture du fichier impossible'));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function openCropModal() {
+      const file = cropQueue[cropIndex];
+
+      if (!file) {
+        cancelCropQueue();
+        return;
+      }
+
+      const overlay = document.getElementById('crop-overlay');
+      const progress = document.getElementById('crop-progress');
+      const imgEl = document.getElementById('crop-image');
+
+      overlay.classList.remove('hidden');
+      progress.textContent = `Chargement de la photo ${cropIndex + 1} sur ${cropQueue.length}...`;
+
+      if (cropper) {
+        cropper.destroy();
+        cropper = null;
+      }
+
+      let dataUrl;
+      try {
+        dataUrl = await readFileAsDataURL(file);
+      } catch (err) {
+        alert(`Impossible de lire "${file.name}". Photo ignorée.`);
+        cropIndex++;
+        openCropModal();
+        return;
+      }
+
+      // On attend que l'image soit réellement décodée (dimensions connues)
+      // avant d'initialiser Cropper.js, pour éviter tout état incohérent.
+      imgEl.src = dataUrl;
+      try {
+        if (imgEl.decode) {
+          await imgEl.decode();
+        } else {
+          await new Promise((resolve, reject) => {
+            imgEl.onload = resolve;
+            imgEl.onerror = reject;
+          });
+        }
+      } catch (err) {
+        alert(`"${file.name}" ne semble pas être une image valide. Photo ignorée.`);
+        cropIndex++;
+        openCropModal();
+        return;
+      }
+
+      progress.textContent = `Photo ${cropIndex + 1} sur ${cropQueue.length}`;
+
+      try {
+        cropper = new Cropper(imgEl, {
+          aspectRatio: currentCropRatio,
+          viewMode: 1,
+          autoCropArea: 1,
+          background: false,
+        });
+      } catch (err) {
+        alert('Erreur lors de l\'ouverture de l\'outil de recadrage. Photo ignorée.');
+        cropIndex++;
+        openCropModal();
+      }
+    }
+
+    window.setCropRatio = function (ratio, btn) {
+      currentCropRatio = ratio;
+      document.querySelectorAll('.crop-ratio-buttons button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (cropper) cropper.setAspectRatio(isNaN(ratio) ? NaN : ratio);
+    };
+
+    window.validateCrop = function () {
+      if (!cropper) return;
+
+      const canvas = cropper.getCroppedCanvas({
+        maxWidth: 1280,
+        maxHeight: 1280,
+        imageSmoothingQuality: 'high',
+      });
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+      currentPhotos.push(dataUrl);
+      renderPhotoPreviews();
+
+      cropIndex++;
+      if (cropIndex < cropQueue.length) {
+        openCropModal();
+      } else {
+        finishCropQueue();
+      }
+    };
+
+    window.cancelCropQueue = function () {
+      finishCropQueue();
+    };
+
+    function finishCropQueue() {
+      if (cropper) {
+        cropper.destroy();
+        cropper = null;
+      }
+      cropQueue = [];
+      cropIndex = 0;
+      document.getElementById('crop-overlay').classList.add('hidden');
+      document.getElementById('crop-image').removeAttribute('src');
+    }
+
+    document.addEventListener('keydown', (e) => {
+      const overlayVisible = !document.getElementById('crop-overlay').classList.contains('hidden');
+      if (!overlayVisible) return;
+      if (e.key === 'Escape') cancelCropQueue();
+    });
+
+    // =========================================================
+    // FORMULAIRE VÉHICULE
+    // =========================================================
     document.getElementById('vehicleForm').addEventListener('submit', (e) => {
       e.preventDefault();
 
@@ -539,9 +615,9 @@
         vendu: document.getElementById('vendu').checked
       };
 
-      if (document.getElementById('editId').value) {
-        const index = vehicles.findIndex(v => v.id === id);
-        vehicles[index] = vehicle;
+      const existingIndex = vehicles.findIndex(v => v.id === id);
+      if (existingIndex !== -1) {
+        vehicles[existingIndex] = vehicle;
       } else {
         vehicles.push(vehicle);
       }
@@ -549,7 +625,7 @@
       try {
         saveVehicles(vehicles);
       } catch (err) {
-        alert('Espace de stockage plein ! Réduis le nombre ou la taille des photos, ou supprime un véhicule existant pour libérer de la place.');
+        alert('Espace de stockage plein ! Réduis le nombre de photos ou supprime un véhicule existant.');
         return;
       }
 
@@ -557,40 +633,41 @@
       renderList();
     });
 
-    window.editVehicle = (id) => {
+    window.editVehicle = function (id) {
       const v = vehicles.find(v => v.id === id);
+      if (!v) return;
       document.getElementById('marque').value = v.marque;
       document.getElementById('modele').value = v.modele;
       document.getElementById('annee').value = v.annee;
       document.getElementById('km').value = v.km;
-      document.getElementById('carburant').value = v.carburant;
-      document.getElementById('boite').value = v.boite;
+      document.getElementById('carburant').value = v.carburant || '';
+      document.getElementById('boite').value = v.boite || '';
       document.getElementById('prix').value = v.prix;
-      document.getElementById('vendu').checked = v.vendu;
-      document.getElementById('description').value = v.description;
+      document.getElementById('vendu').checked = !!v.vendu;
+      document.getElementById('description').value = v.description || '';
       document.getElementById('editId').value = v.id;
       currentPhotos = [...v.photos];
       renderPhotoPreviews();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    window.deleteVehicle = (id) => {
-      if (confirm('Supprimer ce véhicule ?')) {
-        vehicles = vehicles.filter(v => v.id !== id);
-        saveVehicles(vehicles);
-        renderList();
-        if (document.getElementById('editId').value === id) clearForm();
-      }
+    window.deleteVehicle = function (id) {
+      if (!confirm('Supprimer ce véhicule ?')) return;
+      vehicles = vehicles.filter(v => v.id !== id);
+      saveVehicles(vehicles);
+      renderList();
+      if (document.getElementById('editId').value === id) clearForm();
     };
 
-    window.toggleSold = (id) => {
+    window.toggleSold = function (id) {
       const v = vehicles.find(v => v.id === id);
+      if (!v) return;
       v.vendu = !v.vendu;
       saveVehicles(vehicles);
       renderList();
     };
 
-    window.clearForm = () => {
+    window.clearForm = function () {
       document.getElementById('vehicleForm').reset();
       document.getElementById('editId').value = '';
       currentPhotos = [];
@@ -599,6 +676,7 @@
       cropIndex = 0;
       document.getElementById('preCropPreview').innerHTML = '';
       document.getElementById('startCropBtn').classList.add('hidden');
+      finishCropQueue();
     };
   </script>
 </body>
